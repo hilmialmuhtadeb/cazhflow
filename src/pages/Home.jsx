@@ -1,16 +1,16 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { decrement, increment } from '../features/counter/counterSlice'
+import { useSelector } from 'react-redux'
 
 const Home = () => {
-  const count = useSelector(state => state.counter.value)
-  const dispatch = useDispatch()
+  const isLogin = useSelector(state => state.auth.isLogin)
   
   return (
     <div className='container'>
-      <button onClick={() => dispatch(increment())}>increment</button>
-      <p>{ count }</p>
-      <button onClick={() => dispatch(decrement())}>decrement</button>
+      { isLogin ? (
+        <h1>anda sudah login</h1>
+      ) : (
+        <h1>anda belum login</h1>
+      )}
     </div>
   )
 }

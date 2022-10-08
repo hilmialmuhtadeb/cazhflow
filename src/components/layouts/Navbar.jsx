@@ -1,26 +1,28 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-
-function changeMode () {
-  document.documentElement.classList.toggle('dark')
-}
+import React, { useEffect } from 'react'
+import { Link, useLocation  } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import Logo from '../atoms/Logo'
+import Dropdown from './Dropdown'
 
 const Navbar = () => {
+  const isLogin = useSelector(state => state.auth.isLogin)
+  const authUser = useSelector(state => state.auth.authUser) || {}
+  
+  function changeMode () {
+    document.documentElement.classList.toggle('dark')
+  }
+
   return (
-    <div className='bg-white dark:bg-gray-800 dark:text-gray-100 border-b'>
+    <div className='bg-white dark:bg-gray-800 dark:text-gray-100 border-b dark:border-gray-700'>
       <div className='container flex justify-between items-center py-4'>
-        <Link to="/">
-          <h1 className='text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-cyan-500'>Cazhflow</h1>
+        <Link to="/" className='text-2xl font-extrabold '>
+          <Logo />
         </Link>
         <div className='flex'>
+          <Dropdown user={authUser} />
           <button className='mx-6 p-1 border rounded' onClick={changeMode}>
             🌙 | 🔆
           </button>
-          <Link to="/login" className='bg-emerald-500 text-white font-semibold rounded px-4 py-1'>
-            <button>
-              Masuk
-            </button>
-          </Link>
         </div>
       </div>
     </div>

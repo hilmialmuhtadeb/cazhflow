@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { LABEL_CLASS, INPUT_CLASS } from '../utils/form'
 import supabase from '../config/supabase'
 
@@ -7,6 +7,7 @@ const Register = () => {
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const navigate = useNavigate()
   
   async function handleRegister () {
     const { data, error } = await supabase
@@ -17,6 +18,8 @@ const Register = () => {
         password
       },
     ])
+
+    navigate('/login')
   }
 
   function handleKeyUp (e) {
@@ -25,6 +28,13 @@ const Register = () => {
     }
     return
   }
+
+  useEffect(() => {
+    const isLogin = window.localStorage.getItem('user')
+    if (isLogin) {
+      navigate('/')
+    }
+  }, [])
   
   return (
     <div className='container'>

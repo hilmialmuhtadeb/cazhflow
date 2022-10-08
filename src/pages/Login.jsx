@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
 import Logo from '../components/atoms/Logo'
 import supabase from '../config/supabase'
 import { setLoggedIn, setAuthUser } from '../store/slice/authSlice'
@@ -10,6 +10,14 @@ const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const isLogin = window.localStorage.getItem('user')
+    if (isLogin) {
+      navigate('/')
+    }
+  }, [])
   
   async function handleLogin () {
     const { data: user, error } = await supabase
@@ -29,12 +37,16 @@ const Login = () => {
 
         const storedUser = JSON.stringify(user)
         window.localStorage.setItem('user', storedUser)
+        navigate('/')
       }
   }
 
-  useEffect(() => {
-    const isLogin = useSelector(state => state.auth.isLogin)
-  }, [])
+  function handleKeyUp (e) {
+    if (e.key === 'Enter') {
+      return handleLogin()
+    }
+    return
+  }
   
   return (
     <div className='container'>
@@ -43,11 +55,11 @@ const Login = () => {
           Masuk ke <Logo/>
         </h1>
         <div className="relative my-4">
-          <input type="text" className={INPUT_CLASS} placeholder=" " onChange={(e) => setUsername(e.target.value)} />
+          <input type="text" className={INPUT_CLASS} placeholder=" " onKeyUp={handleKeyUp} onChange={(e) => setUsername(e.target.value)} />
           <label className={LABEL_CLASS}>Username</label>
         </div>
         <div className="relative my-4">
-          <input type="password" className={INPUT_CLASS} placeholder=" " onChange={(e) => setPassword(e.target.value)} />
+          <input type="password" className={INPUT_CLASS} placeholder=" " onKeyUp={handleKeyUp} onChange={(e) => setPassword(e.target.value)} />
           <label className={LABEL_CLASS}>Password</label>
         </div>
         <div className="my-8">

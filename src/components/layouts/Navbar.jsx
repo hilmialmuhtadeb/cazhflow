@@ -2,10 +2,9 @@ import React, { useEffect } from 'react'
 import { Link, useLocation  } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Logo from '../atoms/Logo'
-import Dropdown from './Dropdown'
+import AccountDropdown from './AccountDropdown'
 
 const Navbar = () => {
-  const isLogin = useSelector(state => state.auth.isLogin)
   const authUser = useSelector(state => state.auth.authUser) || {}
   
   function changeMode () {
@@ -19,8 +18,8 @@ const Navbar = () => {
           <Logo />
         </Link>
         <div className='flex'>
-          <Dropdown user={authUser} />
-          <button className='mx-6 p-1 border rounded' onClick={changeMode}>
+          <AccountDropdown user={authUser} />
+          <button className='mx-6 p-1 border dark:bg-gray-700 dark:border-gray-500 rounded' onClick={changeMode}>
             🌙 | 🔆
           </button>
         </div>

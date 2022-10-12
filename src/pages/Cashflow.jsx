@@ -10,9 +10,13 @@ const Cashflow = () => {
   const windows = useSelector(state => state.window.windows)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  function openModal () {
+    setIsModalOpen(true)
+  }
 
   function showWindows () {
-    console.log(windows);
     if (windows.length > 0) {
       return (
         <div className="py-4 grid grid-cols-2 gap-4">
@@ -32,7 +36,7 @@ const Cashflow = () => {
     return (
       <div className='py-12 '>
         <img className='mx-auto mb-6' src="./src/assets/arus-kas.svg" alt="Arus Kas" />
-        <p className='text-center font-semibold'>Yah, kamu belum pernah buat catatan arus kas nih. <span className='underline' >Buat di sini</span></p>
+        <p className='text-center font-semibold'>Yah, kamu belum pernah buat catatan arus kas nih. <span className='underline hover:cursor-pointer text-emerald-500 hover:text-emerald-700' onClick={openModal} >Buat di sini</span></p>
       </div>
     )
   }
@@ -69,7 +73,16 @@ const Cashflow = () => {
           <h1 className="text-3xl mb-2 font-bold">Arus Kas</h1>
           <p className='text-gray-700 dark:text-gray-400'>Semua catatan arus kas punyamu ditampilkan di halaman ini. Kamu bisa melihat, menambah, mengubah, dan menghapusnya.</p>
         </div>
-        <WindowModal />
+        <div className="rounded-md h-full bg-red-100">
+          <button
+            type="button"
+            onClick={openModal}
+            className="rounded-md h-8 bg-emerald-500 px-4 text-sm font-medium text-white dark:text-black hover:bg-emerald-600"
+          >
+            + Arus Kas
+          </button>
+        </div>
+        <WindowModal setIsModalOpen={setIsModalOpen} isOpen={isModalOpen} />
       </div>
       { showWindows() }
     </div>

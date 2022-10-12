@@ -1,16 +1,15 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
-import { INPUT_CLASS, LABEL_CLASS } from '../../utils/form'
+import { Fragment, useEffect, useState } from 'react'
 
-export default function MyModal() {
+export default function MyModal(props) {
   let [isOpen, setIsOpen] = useState(false)
 
-  function closeModal() {
-    setIsOpen(false)
-  }
+  useEffect(() => {
+    setIsOpen(props.isOpen)
+  }, [props])
 
-  function openModal() {
-    setIsOpen(true)
+  function closeModal() {
+    props.setIsModalOpen(false)
   }
 
   function handleKeyUp () {
@@ -19,16 +18,6 @@ export default function MyModal() {
 
   return (
     <>
-      <div className="inset-0 flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-white dark:text-black hover:bg-emerald-600"
-        >
-          + Tambah Arus Kas
-        </button>
-      </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child

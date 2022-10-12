@@ -27,18 +27,18 @@ const Login = () => {
       .limit(1)
       .single()
 
-      const { 
-        password: userPassword = ''
-      } = user
+    const { 
+      password: userPassword = ''
+    } = user
 
-      if (userPassword === password) {
-        dispatch(setLoggedIn())
-        dispatch(setAuthUser(user))
+    if (userPassword === password) {
+      dispatch(setLoggedIn())
+      dispatch(setAuthUser(user))
 
-        const storedUser = JSON.stringify(user)
-        window.localStorage.setItem('user', storedUser)
-        navigate('/')
-      }
+      const storedUser = JSON.stringify(user)
+      window.localStorage.setItem('user', storedUser)
+      navigate('/')
+    }
   }
 
   function handleKeyUp (e) {

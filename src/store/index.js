@@ -1,8 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import authReducer from './slice/authSlice'
+import authSlice from './slice/authSlice'
+import windowSlice from './slice/windowSlice'
 
 export default configureStore({
   reducer: {
-    auth: authReducer
-  }
+    auth: authSlice,
+    window: windowSlice
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware()
 })

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 const Home = () => {
@@ -17,7 +18,7 @@ const Home = () => {
           { isLogin ? (
             <span>Halo {authUser.name}, Selamat Datang!</span>
           ) : (
-            <span>anda belum login</span>
+            <span>anda belum login, <Link className='text-sky-500 underline' to='/login'>masuk</Link></span>
           )}
         </h1>
       </div>

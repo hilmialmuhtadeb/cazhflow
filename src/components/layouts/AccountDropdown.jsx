@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setLoggedOut, setAuthUser } from '../../store/slice/authSlice'
 
-const Dropdown = (props) => {
+const AccountDropdown = (props) => {
   const user = props.user
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -20,7 +20,7 @@ const Dropdown = (props) => {
     <div className="text-right">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="w-full justify-center rounded-md px-4 py-2 underline decoration-wavy decoration-emerald-500">
+          <Menu.Button className="w-full justify-center rounded-md px-4 py-2 underline decoration-wavy decoration-emerald-500 dark:hover:bg-gray-700 hover:bg-gray-200">
             {user.name}
           </Menu.Button>
         </div>
@@ -35,6 +35,15 @@ const Dropdown = (props) => {
         >
           <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
+              <Menu.Item>
+                {({ active }) => (
+                  <button
+                    className='group flex text-black w-full items-center rounded-md px-2 py-2 text-sm'
+                  >
+                    Profil
+                  </button>
+                )}
+              </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
                   <button
@@ -53,4 +62,4 @@ const Dropdown = (props) => {
   )
 }
 
-export default Dropdown
+export default AccountDropdown

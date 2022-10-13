@@ -27,7 +27,7 @@ const ExpenseModal = (props) => {
   }
 
   function handleSubmit() {
-    const { window_id } = props || 0
+    const { window } = props || {}
 
     if (!amount || !description) {
       toast.error('Semua kolom harus diisi yaa :D')
@@ -35,7 +35,7 @@ const ExpenseModal = (props) => {
     }
 
     const payload = {
-      window_id,
+      window_id: window.id,
       category_id: category,
       amount: getNumber(amount) || 0,
       description,
@@ -43,7 +43,7 @@ const ExpenseModal = (props) => {
       date
     }
 
-    addNewExpense(payload)
+    addNewExpense(payload, window)
       .then(({ data, error }) => {
         if (error) {
           toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { setWindows } from '../store/slice/windowSlice'
 import WindowModal from '../components/layouts/WindowModal'
 import { getAllWindows } from '../utils/handler/window'
+import { NumericFormat } from 'react-number-format'
 
 const Cashflow = () => {
   const authUser = useSelector(state => state.auth.authUser)
@@ -48,8 +49,22 @@ const Cashflow = () => {
                         <p>Pemasukan</p>
                       </td>
                       <td className='p-2'>
-                        <p className="text-red-500 font-semibold"> Rp. { w.expenses }</p>
-                        <p className="text-emerald-700 dark:text-emerald-500 font-semibold"> Rp. { w.incomes }</p>
+                        <NumericFormat
+                          disabled
+                          value={w.expenses}
+                          thousandSeparator='.'
+                          decimalSeparator=','
+                          prefix='Rp.'
+                          className='bg-transparent text-red-500 font-semibold'
+                        />
+                        <NumericFormat
+                          disabled
+                          value={w.incomes}
+                          thousandSeparator='.'
+                          decimalSeparator=','
+                          prefix='Rp.'
+                          className='bg-transparent text-emerald-700 dark:text-emerald-500 font-semibold'
+                        />
                       </td>
                     </tr>
                   </table>

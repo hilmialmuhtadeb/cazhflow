@@ -107,12 +107,32 @@ const Detail = () => {
       return (
       <div className='container'>
         <div className="my-8">
-          <h1 className='font-bold text-2xl'>💰{ window.title }</h1>
+          <h1 className='font-bold text-2xl my-2'>💰{ window.title }</h1>
           <p>{ window.description }</p>
         </div>
-        <div className="my-8">
-          <p>Pengeluaran : <span className='font-medium text-red-500'>{ window.expenses } Rupiah</span></p>
-          <p>Pemasukan : <span className='font-medium text-emerald-500'>{ window.incomes } Rupiah</span></p>
+        <div className="my-8 flex">
+          <div className="rounded-xl border border-2 border-red-500 p-4">
+            <p className='font-medium'>Pengeluaran</p>
+            <NumericFormat
+              disabled
+              value={window.expenses}
+              thousandSeparator='.'
+              decimalSeparator=','
+              prefix='Rp.'
+              className='bg-transparent text-2xl my-2'
+            />
+          </div>
+          <div className="rounded-xl border border-2 border-emerald-500 p-4 mx-4">
+            <p className='font-medium'>Pemasukan</p>
+            <NumericFormat
+              disabled
+              value={window.incomes}
+              thousandSeparator='.'
+              decimalSeparator=','
+              prefix='Rp.'
+              className='bg-transparent text-2xl my-2'
+            />
+          </div>
         </div>
         <div className="mt-8 flex justify-between items-center">
           <h2 className='font-semibold text-xl'>Catatan Arus Kas</h2>
@@ -127,7 +147,7 @@ const Detail = () => {
         <ExpenseModal
           setIsModalOpen={ setIsModalOpen }
           isOpen={ isModalOpen }
-          window_id={window.id}
+          window={window}
         />
       </div>
     )

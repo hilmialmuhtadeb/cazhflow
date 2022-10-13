@@ -54,10 +54,34 @@ async function getExpenses (window_id) {
     return { data, error }
 }
 
-async function addNewExpense (payload) {
+async function addNewExpense (payload, window) {
   const { data, error } = await supabase
     .from('expenses')
     .insert([ payload ])
+
+  const { incomes, expenses } = window
+  const { amount, isExpense, window_id } = payload
+
+  const newExpenses = expenses + parseInt(amount)
+  const newIncomes = incomes + parseInt(amount)
+  
+  if (isExpense === 'true') {
+    console.log('exp: ' + newExpenses)
+    await supabase
+      .from('windows')
+      .update({
+        expenses: newExpenses
+      })
+      .eq('id', window_id)
+  } else {
+    console.log('inc: ' + newIncomes)
+    await supabase
+      .from('windows')
+      .update({
+        incomes: newIncomes
+      })
+      .eq('id', window_id)
+  }
 
   return { data, error }
 }

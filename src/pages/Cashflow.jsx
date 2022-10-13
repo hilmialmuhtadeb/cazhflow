@@ -5,6 +5,8 @@ import { setWindows } from '../store/slice/windowSlice'
 import WindowModal from '../components/layouts/WindowModal'
 import { getAllWindows } from '../utils/handler/window'
 import { NumericFormat } from 'react-number-format'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 
 const Cashflow = () => {
   const authUser = useSelector(state => state.auth.authUser)
@@ -38,36 +40,52 @@ const Cashflow = () => {
         <div className="py-4 grid grid-cols-2 gap-4">
           { windows.map(w => (
             <Link to={'/cashflow/' + w.slug} key={w.id} >
-              <div className="shadow-xl relative bg-gray-200 border dark:border-gray-700 dark:bg-gray-700 rounded-2xl h-64 p-4">
-                <h2 className="text-xl font-semibold">{ w.title }</h2>
-                <p className='my-2 text-gray-500 dark:text-gray-400 line-clamp-4'>{ w.description }</p>
-                <div className="my-2 absolute bottom-0">
-                  <table>
-                    <tr>
-                      <td className='p-2'>
-                        <p>Pengeluaran</p>
-                        <p>Pemasukan</p>
-                      </td>
-                      <td className='p-2'>
-                        <NumericFormat
-                          disabled
-                          value={w.expenses}
-                          thousandSeparator='.'
-                          decimalSeparator=','
-                          prefix='Rp.'
-                          className='bg-transparent text-red-500 font-semibold'
-                        />
-                        <NumericFormat
-                          disabled
-                          value={w.incomes}
-                          thousandSeparator='.'
-                          decimalSeparator=','
-                          prefix='Rp.'
-                          className='bg-transparent text-emerald-700 dark:text-emerald-500 font-semibold'
-                        />
-                      </td>
-                    </tr>
-                  </table>
+              <div className="shadow-xl relative bg-gray-200 border dark:border-gray-700 dark:bg-gray-700 rounded-2xl h-64">
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold">{ w.title }</h2>
+                  <p className='my-2 text-gray-500 dark:text-gray-400 line-clamp-4'>{ w.description }</p>
+                </div>
+                <div className="p-4 absolute bottom-0 flex items-center w-full">
+                  <div className="grow">
+                    <table>
+                      <tr>
+                        <td>
+                          <p>Pengeluaran</p>
+                        </td>
+                        <td className='px-2'>
+                          <NumericFormat
+                            disabled
+                            value={w.expenses}
+                            thousandSeparator='.'
+                            decimalSeparator=','
+                            prefix='Rp.'
+                            className='bg-transparent text-red-500 font-semibold'
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <p>Pemasukan</p>
+                        </td>
+                        <td className='px-2'>
+                          <NumericFormat
+                            disabled
+                            value={w.incomes}
+                            thousandSeparator='.'
+                            decimalSeparator=','
+                            prefix='Rp.'
+                            className='bg-transparent text-emerald-700 dark:text-emerald-500 font-semibold'
+                          />
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div className="flex-none py-2 px-3 bg-yellow-500 text-white rounded mx-2">
+                    <FontAwesomeIcon icon={faPen} />
+                  </div>
+                  <div className="flex-none py-2 px-3 bg-red-500 text-white rounded">
+                    <FontAwesomeIcon icon={faTrash} />
+                  </div>
                 </div>
               </div>
             </Link>

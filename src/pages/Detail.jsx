@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import ExpenseModal from '../components/layouts/ExpenseModal'
-import supabase from '../config/supabase'
 import { setExpenses } from '../store/slice/windowSlice'
 import { NumericFormat } from 'react-number-format';
+import { getExpenses, getWindowBySlug } from '../utils/handler/window'
 
 const Detail = () => {
   const { slug } = useParams()
@@ -13,6 +13,25 @@ const Detail = () => {
   const dispatch = useDispatch()
   const expenses = useSelector(state => state.window.expenses)
 
+  function openModal () {
+    setIsModalOpen(true)
+  }
+  
+  useEffect(() => {
+    getWindowBySlug(slug)
+      .then(({ data, error}) => {
+        setWindow(data)
+      })
+  }, [])
+    
+  useEffect(() => {
+    const window_id = window?.id || 0
+    getExpenses(window_id)
+      .then(({ data, err }) => {
+        dispatch(setExpenses(data))
+      })
+  }, [window])
+    
   function showExpenses () {
     if (!!expenses) {
       return (
@@ -83,44 +102,9 @@ const Detail = () => {
       )
     }
   }
-
-  function openModal () {
-    setIsModalOpen(true)
-  }
-
-  async function getExpenses () {
-    const windowObj = window || {}
-    const id = windowObj.id || 0
-    
-    const { data, error } = await supabase
-      .from('expenses')
-      .select()
-      .eq('window_id', id)
-
-    dispatch(setExpenses(data))
-  }
-
-  async function getWindow () {
-    const { data, error } = await supabase
-      .from('windows')
-      .select()
-      .eq('slug', slug)
-      .limit(1)
-      .single()
-
-    setWindow(data)
-  }
   
-  useEffect(() => {
-    getWindow()
-  }, [])
-
-  useEffect(() => {
-    getExpenses()
-  }, [window])
-
   if (!!window) {
-    return (
+      return (
       <div className='container'>
         <div className="my-8">
           <h1 className='font-bold text-2xl'>💰{ window.title }</h1>

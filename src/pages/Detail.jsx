@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import ExpenseModal from '../components/layouts/ExpenseModal'
 import supabase from '../config/supabase'
 import { setExpenses } from '../store/slice/windowSlice'
+import { NumericFormat } from 'react-number-format';
 
 const Detail = () => {
   const { slug } = useParams()
@@ -19,14 +20,14 @@ const Detail = () => {
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6" width="40%">
                         Deskripsi
+                    </th>
+                    <th scope="col" className="py-3 px-6" width="15%">
+                        Nominal
                     </th>
                     <th scope="col" className="py-3 px-6 text-center">
                         Kategori
-                    </th>
-                    <th scope="col" className="py-3 px-6 text-center">
-                        Nominal
                     </th>
                     <th scope="col" className="py-3 px-6 text-center">
                         Tanggal
@@ -42,12 +43,23 @@ const Detail = () => {
                       <th scope="row" className="py-4 px-6 font-medium text-gray-900 dark:text-white">
                           { exp.description }
                       </th>
+                      <th
+                        className={ 
+                          `py-4 px-6 font-medium ${exp.isExpense ? 'text-red-500' : 'text-emerald-500'}`
+                        }
+                      >
+                        <NumericFormat
+                          disabled
+                          value={exp.amount}
+                          thousandSeparator='.'
+                          decimalSeparator=','
+                          prefix='Rp.'
+                          className='bg-transparent'
+                        />
+                      </th>
                       <td className="py-4 px-6 text-center">
                           { exp.category_id }
                       </td>
-                      <th className="py-4 px-6 text-center font-medium text-gray-900 dark:text-white">
-                          { exp.amount }
-                      </th>
                       <td className="py-4 px-6 text-center">
                           { exp.date }
                       </td>

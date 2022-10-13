@@ -22,12 +22,22 @@ const Cashflow = () => {
         <div className="py-4 grid grid-cols-2 gap-4">
           { windows.map(w => (
             <Link to={'/cashflow/' + w.slug} key={w.id} >
-              <div className="shadow-xl border dark:border-gray-700 rounded-2xl h-64 p-4">
+              <div className="shadow-xl relative bg-gray-200 border dark:border-gray-700 dark:bg-gray-700 rounded-2xl h-64 p-4">
                 <h2 className="text-xl font-semibold">{ w.title }</h2>
-                <p className='my-2 text-gray-500 dark:text-gray-400'>{ w.description }</p>
-                <div className="my-2">
-                  <p>Pengeluaran : <span className="text-red-500 font-semibold">{ w.expenses } Rupiah</span></p>
-                  <p>Pemasukan : <span className="text-emerald-700 dark:text-emerald-500 font-semibold">{ w.incomes } Rupiah</span></p>
+                <p className='my-2 text-gray-500 dark:text-gray-400 line-clamp-4'>{ w.description }</p>
+                <div className="my-2 absolute bottom-0">
+                  <table>
+                    <tr>
+                      <td className='p-2'>
+                        <p>Pengeluaran</p>
+                        <p>Pemasukan</p>
+                      </td>
+                      <td className='p-2'>
+                        <p className="text-red-500 font-semibold"> Rp. { w.expenses }</p>
+                        <p className="text-emerald-700 dark:text-emerald-500 font-semibold"> Rp. { w.incomes }</p>
+                      </td>
+                    </tr>
+                  </table>
                 </div>
               </div>
             </Link>

@@ -1,19 +1,60 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import supabase from '../../config/supabase'
+import { toast } from 'react-hot-toast'
+import { addItemToWindows } from '../../store/slice/windowSlice'
+import slugify from 'react-slugify';
 
-export default function MyModal(props) {
-  let [isOpen, setIsOpen] = useState(false)
+const WindowModal = (props) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const authUser = useSelector(state => state.auth.authUser)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     setIsOpen(props.isOpen)
   }, [props])
 
+  async function handleSubmit() {
+    const username = authUser.username
+    const slug = slugify(`${title} ${Date.now()}`)
+    
+    if (!title || !username) {
+      toast.error('Judul harus diisi yaa :D')
+      return
+    }
+    
+    const { data, error } = await supabase
+      .from('windows')
+      .insert([{ 
+        username,
+        slug,
+        title,
+        description
+      },
+    ])
+
+    if (error) {
+      toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')
+      return
+    }
+  
+    toast.success('Berhasil membuat jendela arus kas baru!')
+    dispatch(addItemToWindows(data))
+    props.setIsModalOpen(false)
+  }
+
   function closeModal() {
     props.setIsModalOpen(false)
   }
 
-  function handleKeyUp () {
-
+  function handleKeyUp (e) {
+    if (e.key === 'Enter') {
+      return handleSubmit()
+    }
+    return
   }
 
   return (
@@ -48,22 +89,33 @@ export default function MyModal(props) {
                     as="h3"
                     className="text-xl font-medium leading-6 text-gray-900"
                   >
-                    Buat Catatan Arus Kas
+                    Buat Jendela Arus Kas Baru
                   </Dialog.Title>
-                  <div className="relative my-4">
+                  <div className="my-4">
                     <label className='my-2 block font-medium text-gray-600'>Judul Arus Kas</label>
-                    <input type="text" className='w-full border border-gray-300 p-2 rounded-md' placeholder="contoh: Agustus 2022" onKeyUp={handleKeyUp} />
+                    <input 
+                      type="text"
+                      className='w-full border border-gray-300 p-2 rounded-md'
+                      placeholder="contoh: Agustus 2022"
+                      onKeyUp={handleKeyUp}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
                   </div>
-                  <div className="relative my-4">
+                  <div className="my-4">
                     <label className='my-2 block font-medium text-gray-600'>Deskripsi <span className='text-sm font-normal'>(opsional)</span></label>
-                    <textarea rows="5" className='w-full border border-gray-300 resize-none p-2 rounded-md'></textarea>
+                    <textarea 
+                      rows="5"
+                      className='w-full border border-gray-300 resize-none p-2 rounded-md'
+                      onKeyUp={handleKeyUp}
+                      onChange={(e) => setDescription(e.target.value)}
+                    ></textarea>
                   </div>
 
                   <div className="mt-4">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
+                      className="inline-flex justify-center rounded-md border border-transparent bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+                      onClick={handleSubmit}
                     >
                       Buat
                     </button>
@@ -77,3 +129,5 @@ export default function MyModal(props) {
     </>
   )
 }
+
+export default WindowModal

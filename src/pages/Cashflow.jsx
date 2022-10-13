@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import supabase from '../config/supabase'
 import { setWindows } from '../store/slice/windowSlice'
 import WindowModal from '../components/layouts/WindowModal'
@@ -21,14 +21,26 @@ const Cashflow = () => {
       return (
         <div className="py-4 grid grid-cols-2 gap-4">
           { windows.map(w => (
-            <div key={w.id} className="shadow-xl border dark:border-gray-700 rounded-2xl h-64 p-4">
-              <h2 className="text-xl font-semibold">{ w.name }</h2>
-              <p className='my-2 text-gray-700 dark:text-gray-400'>{ w.description }</p>
-              <div className="my-2">
-                <p className="text-red-500">Pengeluaran : { w.expenses }</p>
-                <p className="text-emerald-700 dark:text-emerald-500">Pemasukan : { w.incomes }</p>
+            <Link to={'/cashflow/' + w.slug} key={w.id} >
+              <div className="shadow-xl relative bg-gray-200 border dark:border-gray-700 dark:bg-gray-700 rounded-2xl h-64 p-4">
+                <h2 className="text-xl font-semibold">{ w.title }</h2>
+                <p className='my-2 text-gray-500 dark:text-gray-400 line-clamp-4'>{ w.description }</p>
+                <div className="my-2 absolute bottom-0">
+                  <table>
+                    <tr>
+                      <td className='p-2'>
+                        <p>Pengeluaran</p>
+                        <p>Pemasukan</p>
+                      </td>
+                      <td className='p-2'>
+                        <p className="text-red-500 font-semibold"> Rp. { w.expenses }</p>
+                        <p className="text-emerald-700 dark:text-emerald-500 font-semibold"> Rp. { w.incomes }</p>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
               </div>
-            </div>
+            </Link>
           )) }
         </div>
       )
@@ -46,6 +58,7 @@ const Cashflow = () => {
       .from('windows')
       .select()
       .eq('username', username)
+      
     dispatch(setWindows(windows))
   }
   
@@ -57,9 +70,13 @@ const Cashflow = () => {
     const user = JSON.parse(strUser) || {}
     getWindows(user.username)
   }, [])
+
+  useEffect(() => {
+    showWindows()
+  }, [windows])
   
   return (
-    <div className='container my-8'>
+    <div className='container py-8'>
       <div>
         <h1 className='text-xl font-semibold my-2'>Halo, selamat datang <span className='underline decoration-wavy decoration-emerald-500'>{ authUser.name }</span>!</h1>
         <p className='text-gray-700 dark:text-gray-400'>Apa kabar? Semoga baik, jangan lupa catat arus kasmu yaa! Biar sehat finansial :D</p>

@@ -3,16 +3,29 @@ import { createSlice } from '@reduxjs/toolkit'
 export const windowSlice = createSlice({
   name: 'window',
   initialState: {
-    windows: []
+    windows: [],
+    expenses: []
   },
   reducers: {
     setWindows: (state, payload) => {
       const windows = payload.payload
       state.windows = windows
+    },
+    addItemToWindows: (state, payload) => {
+      const window = payload.payload
+      state.windows = state.windows.concat(window)
+    },
+    setExpenses: (state, payload) => {
+      const expenses = payload.payload
+      state.expenses = expenses
+    },
+    addItemToExpenses: (state, payload) => {
+      const expense = payload.payload
+      state.expenses = state.expenses.concat(expense)
     }
   },
 })
 
-export const { setWindows } = windowSlice.actions
+export const { setWindows, addItemToWindows, setExpenses, addItemToExpenses } = windowSlice.actions
 
 export default windowSlice.reducer

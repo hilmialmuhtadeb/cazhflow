@@ -7,6 +7,7 @@ import Login from '../pages/Login'
 import Register from '../pages/Register'
 import { setAuthUser, setLoggedIn } from '../store/slice/authSlice'
 import Cashflow from '../pages/Cashflow'
+import Detail from '../pages/Detail'
 
 const AppRoute = () => {
   const dispatch = useDispatch()
@@ -25,6 +26,7 @@ const AppRoute = () => {
     <Routes>
       <Route path='/' element={<Cashflow />} />
       <Route path='/welcome' element={<Home />} />
+      <Route path='/cashflow/:slug' element={<Detail />} />
 
       <Route path='/register' element={<Register />} />
       <Route path='/login' element={<Login />} />

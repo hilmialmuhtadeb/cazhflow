@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import supabase from '../config/supabase'
 import { setWindows } from '../store/slice/windowSlice'
 import WindowModal from '../components/layouts/WindowModal'
+import { getAllWindows } from '../utils/handler/window'
 
 const Cashflow = () => {
   const authUser = useSelector(state => state.auth.authUser)
@@ -15,7 +15,22 @@ const Cashflow = () => {
   function openModal () {
     setIsModalOpen(true)
   }
+  
+  useEffect(() => {
+    const strUser = window.localStorage.getItem('user')
+    if (!strUser) {
+      return navigate('/welcome')
+    }
+    const user = JSON.parse(strUser) || {}
 
+    getAllWindows(user.username)
+      .then(res => dispatch(setWindows(res)))
+  }, [])
+
+  useEffect(() => {
+    showWindows()
+  }, [windows])
+  
   function showWindows () {
     if (windows.length > 0) {
       return (
@@ -53,28 +68,6 @@ const Cashflow = () => {
     )
   }
 
-  async function getWindows (username) {
-    const { data: windows, error } = await supabase
-      .from('windows')
-      .select()
-      .eq('username', username)
-      
-    dispatch(setWindows(windows))
-  }
-  
-  useEffect(() => {
-    const strUser = window.localStorage.getItem('user')
-    if (!strUser) {
-      return navigate('/welcome')
-    }
-    const user = JSON.parse(strUser) || {}
-    getWindows(user.username)
-  }, [])
-
-  useEffect(() => {
-    showWindows()
-  }, [windows])
-  
   return (
     <div className='container py-8'>
       <div>

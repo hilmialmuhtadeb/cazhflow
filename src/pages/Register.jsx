@@ -1,32 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LABEL_CLASS, INPUT_CLASS } from '../utils/form'
-import supabase from '../config/supabase'
+import { registerUser } from '../utils/handler/auth'
+import { handleKeyUp } from '../utils/shared'
 
 const Register = () => {
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
-  
-  async function handleRegister () {
-    const { data, error } = await supabase
-    .from('users')
-    .insert([{ 
-        name,
-        username,
-        password
-      },
-    ])
 
-    navigate('/login')
-  }
-
-  function handleKeyUp (e) {
-    if (e.key === 'Enter') {
-      return handleRegister()
+  function handleSubmit() {
+    const payload = {
+      name,
+      username,
+      password
     }
-    return
+    registerUser(payload)
+    navigate('/login')
   }
 
   useEffect(() => {
@@ -46,19 +37,19 @@ const Register = () => {
           <Link to="/login" className='underline decoration-solid text-sky-500'>masuk</Link>
         </p>
         <div className="relative my-4">
-          <input type="text" className={INPUT_CLASS} placeholder=" " onKeyUp={handleKeyUp} onChange={(e) => setName(e.target.value)} />
+          <input type="text" className={INPUT_CLASS} placeholder=" " onKeyUp={(e) => handleKeyUp(e, handleSubmit)} onChange={(e) => setName(e.target.value)} />
           <label className={LABEL_CLASS}>Nama</label>
         </div>
         <div className="relative my-4">
-          <input type="text" className={INPUT_CLASS} placeholder=" " onKeyUp={handleKeyUp} onChange={(e) => setUsername(e.target.value)} />
+          <input type="text" className={INPUT_CLASS} placeholder=" " onKeyUp={(e) => handleKeyUp(e, handleSubmit)} onChange={(e) => setUsername(e.target.value)} />
           <label className={LABEL_CLASS}>Username</label>
         </div>
         <div className="relative my-4">
-          <input type="password" className={INPUT_CLASS} placeholder=" " onKeyUp={handleKeyUp} onChange={(e) => setPassword(e.target.value)} />
+          <input type="password" className={INPUT_CLASS} placeholder=" " onKeyUp={(e) => handleKeyUp(e, handleSubmit)} onChange={(e) => setPassword(e.target.value)} />
           <label className={LABEL_CLASS}>Password</label>
         </div>
         <div className="my-8">
-          <button className='bg-emerald-500 text-white rounded-full font-bold w-full py-4' onClick={handleRegister}>Daftar</button>
+          <button className='bg-emerald-500 text-white rounded-full font-bold w-full py-4' onClick={handleSubmit}>Daftar</button>
         </div>
       </div>
     </div>

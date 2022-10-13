@@ -1,10 +1,11 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
-import supabase from '../../config/supabase'
 import { toast } from 'react-hot-toast'
 import { NumericFormat } from 'react-number-format';
 import { addItemToExpenses } from '../../store/slice/windowSlice';
 import { useDispatch } from 'react-redux';
+import { addNewExpense } from '../../utils/handler/window'
+import { handleKeyUp } from '../../utils/shared'
 
 const ExpenseModal = (props) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -25,45 +26,38 @@ const ExpenseModal = (props) => {
     return splitted.join('')
   }
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const { window_id } = props || 0
 
     if (!amount || !description) {
       toast.error('Semua kolom harus diisi yaa :D')
       return
     }
-    
-    const { data, error } = await supabase
-      .from('expenses')
-      .insert([{ 
-        window_id,
-        category_id: category,
-        amount: getNumber(amount) || 0,
-        description,
-        isExpense,
-        date
-      },
-    ])
 
-    if (error) {
-      toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')
-      return
+    const payload = {
+      window_id,
+      category_id: category,
+      amount: getNumber(amount) || 0,
+      description,
+      isExpense,
+      date
     }
-  
-    toast.success('Berhasil menambahkan catatan arus kas!')
-    dispatch(addItemToExpenses(data))
-    props.setIsModalOpen(false)
+
+    addNewExpense(payload)
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')
+          return
+        }
+      
+        toast.success('Berhasil menambahkan catatan arus kas!')
+        dispatch(addItemToExpenses(data))
+        props.setIsModalOpen(false)
+      })
   }
 
   function closeModal() {
     props.setIsModalOpen(false)
-  }
-
-  function handleKeyUp (e) {
-    if (e.key === 'Enter') {
-      return handleSubmit()
-    }
-    return
   }
 
   return (
@@ -106,7 +100,7 @@ const ExpenseModal = (props) => {
                       type="text"
                       className='w-full border border-gray-300 p-2 rounded-md'
                       placeholder="contoh: Nasi Goreng"
-                      onKeyUp={handleKeyUp}
+                      onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setDescription(e.target.value)}
                     />
                   </div>
@@ -118,6 +112,7 @@ const ExpenseModal = (props) => {
                       decimalSeparator=','
                       prefix='Rp.'
                       allowNegative={ false }
+                      onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setAmount(e.target.value)}
                     />
                   </div>
@@ -127,7 +122,7 @@ const ExpenseModal = (props) => {
                       type="date"
                       className='w-full border border-gray-300 p-2 rounded-md'
                       placeholder="contoh: Agustus 2022"
-                      onKeyUp={handleKeyUp}
+                      onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setDate(e.target.value)}
                     />
                   </div>
@@ -152,11 +147,11 @@ const ExpenseModal = (props) => {
                   </div>
                   <div className="mb-8">
                     <div className="my-2">
-                      <input type="radio" name="isExpense" id='expense' value={true} onChange={(e) => setIsExpense(e.target.value)} />
+                      <input onKeyUp={(e) => handleKeyUp(e, handleSubmit)} type="radio" name="isExpense" id='expense' value={true} onChange={(e) => setIsExpense(e.target.value)} />
                       <label className='mx-2 font-medium text-gray-600' for='expense'>Pengeluaran</label>
                     </div>
                     <div className="my-2">
-                      <input type="radio" name="isExpense" id='income' value={false} onChange={(e) => setIsExpense(e.target.value)} />
+                      <input onKeyUp={(e) => handleKeyUp(e, handleSubmit)} type="radio" name="isExpense" id='income' value={false} onChange={(e) => setIsExpense(e.target.value)} />
                       <label className='mx-2 font-medium text-gray-600' for='income'>Pemasukan</label>
                     </div>
                   </div>

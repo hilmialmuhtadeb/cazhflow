@@ -60,6 +60,16 @@ async function editWindow (payload, id) {
   return { data, error }
 }
 
+async function deleteWindow (id) {
+  const { data, error } = await supabase
+    .from('windows')
+    .delete()
+    .eq('id', id)
+    .single()
+
+  return { data, error }
+}
+
 async function getExpenses (window_id) {
   const { data, error } = await supabase
     .from('expenses')
@@ -106,6 +116,7 @@ export {
   getWindowBySlug,
   addNewWindow,
   editWindow,
+  deleteWindow,
   getExpenses,
-  addNewExpense
+  addNewExpense,
 }

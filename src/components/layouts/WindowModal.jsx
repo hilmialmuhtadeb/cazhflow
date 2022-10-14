@@ -44,7 +44,7 @@ const WindowModal = (props) => {
           }
           toast.success('Berhasil mengubah data!')
           dispatch(addEditedItemToWindows(data))
-          props.setIsModalOpen(false)
+          props.setIsWindowModalOpen(false)
         })
         return
     }
@@ -58,12 +58,12 @@ const WindowModal = (props) => {
         }
         toast.success('Berhasil membuat jendela arus kas baru!')
         dispatch(addItemToWindows(data))
-        props.setIsModalOpen(false)
+        props.setIsWindowModalOpen(false)
       })
   }
   
   function closeModal() {
-    props.setIsModalOpen(false)
+    props.setIsWindowModalOpen(false)
   }
 
   useEffect(() => {

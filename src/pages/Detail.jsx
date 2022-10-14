@@ -33,7 +33,7 @@ const Detail = () => {
   }, [window])
     
   function showExpenses () {
-    if (!!expenses) {
+    if (expenses.length > 0) {
       return (
         <div className="py-8">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -98,7 +98,10 @@ const Detail = () => {
       )
     } else {
       return (
-        <p>Loading</p>
+        <div className='py-12 text-center'>
+          <img className='mx-auto' src="../src/assets/expenses.svg" alt="pengeluaran" />
+          <p className='font-medium my-4'>Catatan arus kas masih kosong.</p>
+        </div>
       )
     }
   }

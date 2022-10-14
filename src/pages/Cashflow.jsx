@@ -6,19 +6,22 @@ import WindowModal from '../components/layouts/WindowModal'
 import { getAllWindows } from '../utils/handler/window'
 import { NumericFormat } from 'react-number-format'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faPen, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import DeleteModal from '../components/layouts/DeleteModal'
 
 const Cashflow = () => {
   const authUser = useSelector(state => state.auth.authUser)
   const windows = useSelector(state => state.window.windows)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isWindowModalOpen, setIsWindowModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [editWindow, setEditWindow] = useState({})
+  const [deleteWindow, setDeleteWindow] = useState(0)
 
   function openModal () {
     setEditWindow({})
-    setIsModalOpen(true)
+    setIsWindowModalOpen(true)
   }
   
   useEffect(() => {
@@ -34,23 +37,26 @@ const Cashflow = () => {
 
   function editButtonHandler (window) {
     setEditWindow(window)
-    setIsModalOpen(true)
+    setIsWindowModalOpen(true)
+  }
+
+  function deleteButtonHandler (window) {
+    setDeleteWindow(window.id)
+    setIsDeleteModalOpen(true)
   }
   
   function showWindows () {
     if (windows.length > 0) {
       return (
-        <div className="py-4 grid grid-cols-2 gap-4">
+        <div className="py-4 grid grid-cols-2 gap-x-4 gap-y-6">
           { windows.map(w => (
-            <div key={w.id} className="shadow-xl relative bg-gray-200 border dark:border-gray-700 dark:bg-gray-700 rounded-2xl h-64">
-              <Link to={'/cashflow/' + w.slug} >
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold">{ w.title }</h2>
-                  <p className='my-2 text-gray-500 dark:text-gray-400 line-clamp-4'>{ w.description }</p>
-                </div>
-              </Link>
+            <div key={w.id} className="shadow relative bg-gray-100 border dark:border-gray-700 dark:bg-gray-700 rounded-md h-64">
+              <div className="p-4">
+                <h2 className="text-xl font-semibold">{ w.title }</h2>
+                <p className='my-2 text-gray-500 dark:text-gray-400 line-clamp-4'>{ w.description }</p>
+              </div>
               <div className="p-4 absolute bottom-0 flex items-center w-full">
-                <div className="grow">
+                <div className="w-1/2">
                   <table>
                     <tbody>
                       <tr>
@@ -64,7 +70,7 @@ const Cashflow = () => {
                             thousandSeparator='.'
                             decimalSeparator=','
                             prefix='Rp.'
-                            className='bg-transparent text-red-500 font-semibold'
+                            className='bg-transparent text-red-500 font-bold'
                           />
                         </td>
                       </tr>
@@ -79,18 +85,23 @@ const Cashflow = () => {
                             thousandSeparator='.'
                             decimalSeparator=','
                             prefix='Rp.'
-                            className='bg-transparent text-emerald-700 dark:text-emerald-500 font-semibold'
+                            className='bg-transparent text-emerald-700 dark:text-emerald-500 font-bold'
                           />
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-                <div className="flex-none py-2 px-3 bg-yellow-500 hover:bg-yellow-600 hover:cursor-pointer text-white rounded mx-2 z-10" onClick={() => editButtonHandler(w)} >
-                  <FontAwesomeIcon icon={faPen} />
-                </div>
-                <div className="flex-none py-2 px-3 bg-red-500 text-white rounded">
-                  <FontAwesomeIcon icon={faTrash} />
+                <div className='flex pl-2 justify-end w-1/2'>
+                  <Link to={'/cashflow/' + w.slug} className='grow text-center bg-blue-500 hover:bg-blue-600 box-border text-white py-2 px-3 rounded' >
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </Link>
+                  <div className="py-2 px-3 box-border border border-2 border-yellow-500 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:cursor-pointer rounded mx-2" onClick={() => editButtonHandler(w)} >
+                    <FontAwesomeIcon icon={faPen} />
+                  </div>
+                  <div className="py-2 px-3 box-border border border-2 border-red-500 text-red-500 hover:text-white hover:bg-red-500 hover:cursor-pointer rounded">
+                    <FontAwesomeIcon icon={faTrash} onClick={() => deleteButtonHandler(w)} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -130,7 +141,8 @@ const Cashflow = () => {
             + Arus Kas
           </button>
         </div>
-        <WindowModal editWindow={editWindow} setIsModalOpen={setIsModalOpen} isOpen={isModalOpen} />
+        <WindowModal editWindow={editWindow} setIsWindowModalOpen={setIsWindowModalOpen} isOpen={isWindowModalOpen} />
+        <DeleteModal deleteWindow={deleteWindow} setIsDeleteModalOpen={setIsDeleteModalOpen} isOpen={isDeleteModalOpen} />
       </div>
       { showWindows() }
     </div>

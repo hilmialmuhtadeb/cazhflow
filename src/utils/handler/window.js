@@ -45,6 +45,21 @@ async function addNewWindow (payload) {
   return { data, error }
 }
 
+async function editWindow (payload, id) {
+  const { title, slug, description } = payload
+  const { data, error } = await supabase
+    .from('windows')
+    .update({
+      title,
+      slug,
+      description
+    })
+    .eq('id', id)
+    .single()
+
+  return { data, error }
+}
+
 async function getExpenses (window_id) {
   const { data, error } = await supabase
     .from('expenses')
@@ -90,6 +105,7 @@ export {
   getAllWindows,
   getWindowBySlug,
   addNewWindow,
+  editWindow,
   getExpenses,
   addNewExpense
 }

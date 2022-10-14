@@ -14,8 +14,10 @@ const Cashflow = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editWindow, setEditWindow] = useState({})
 
   function openModal () {
+    setEditWindow({})
     setIsModalOpen(true)
   }
   
@@ -30,24 +32,27 @@ const Cashflow = () => {
       .then(res => dispatch(setWindows(res)))
   }, [])
 
-  useEffect(() => {
-    showWindows()
-  }, [windows])
+  function editButtonHandler (window) {
+    setEditWindow(window)
+    setIsModalOpen(true)
+  }
   
   function showWindows () {
     if (windows.length > 0) {
       return (
         <div className="py-4 grid grid-cols-2 gap-4">
           { windows.map(w => (
-            <Link to={'/cashflow/' + w.slug} key={w.id} >
-              <div className="shadow-xl relative bg-gray-200 border dark:border-gray-700 dark:bg-gray-700 rounded-2xl h-64">
+            <div key={w.id} className="shadow-xl relative bg-gray-200 border dark:border-gray-700 dark:bg-gray-700 rounded-2xl h-64">
+              <Link to={'/cashflow/' + w.slug} >
                 <div className="p-4">
                   <h2 className="text-xl font-semibold">{ w.title }</h2>
                   <p className='my-2 text-gray-500 dark:text-gray-400 line-clamp-4'>{ w.description }</p>
                 </div>
-                <div className="p-4 absolute bottom-0 flex items-center w-full">
-                  <div className="grow">
-                    <table>
+              </Link>
+              <div className="p-4 absolute bottom-0 flex items-center w-full">
+                <div className="grow">
+                  <table>
+                    <tbody>
                       <tr>
                         <td>
                           <p>Pengeluaran</p>
@@ -78,17 +83,17 @@ const Cashflow = () => {
                           />
                         </td>
                       </tr>
-                    </table>
-                  </div>
-                  <div className="flex-none py-2 px-3 bg-yellow-500 text-white rounded mx-2">
-                    <FontAwesomeIcon icon={faPen} />
-                  </div>
-                  <div className="flex-none py-2 px-3 bg-red-500 text-white rounded">
-                    <FontAwesomeIcon icon={faTrash} />
-                  </div>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="flex-none py-2 px-3 bg-yellow-500 hover:bg-yellow-600 hover:cursor-pointer text-white rounded mx-2 z-10" onClick={() => editButtonHandler(w)} >
+                  <FontAwesomeIcon icon={faPen} />
+                </div>
+                <div className="flex-none py-2 px-3 bg-red-500 text-white rounded">
+                  <FontAwesomeIcon icon={faTrash} />
                 </div>
               </div>
-            </Link>
+            </div>
           )) }
         </div>
       )
@@ -125,7 +130,7 @@ const Cashflow = () => {
             + Arus Kas
           </button>
         </div>
-        <WindowModal setIsModalOpen={setIsModalOpen} isOpen={isModalOpen} />
+        <WindowModal editWindow={editWindow} setIsModalOpen={setIsModalOpen} isOpen={isModalOpen} />
       </div>
       { showWindows() }
     </div>

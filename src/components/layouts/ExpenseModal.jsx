@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { NumericFormat } from 'react-number-format';
-import { addItemToExpenses } from '../../store/slice/windowSlice';
+import { addEditedItemToWindows, addItemToExpenses, setActiveWindow } from '../../store/slice/windowSlice';
 import { useDispatch } from 'react-redux';
 import { addNewExpense } from '../../utils/handler/window'
 import { handleKeyUp } from '../../utils/shared'
@@ -26,6 +26,20 @@ const ExpenseModal = (props) => {
     return splitted.join('')
   }
 
+  function getNewWindow() {
+    if (isExpense === 'true') {
+      return {
+        ...props.window,
+        expenses: props.window.expenses + parseInt(getNumber(amount))
+      }
+    } else {
+      return {
+        ...props.window,
+        incomes: props.window.incomes + parseInt(getNumber(amount))
+      }
+    }
+  }
+
   function handleSubmit() {
     const { window } = props || {}
 
@@ -42,16 +56,21 @@ const ExpenseModal = (props) => {
       isExpense,
       date
     }
-
+    
     addNewExpense(payload, window)
       .then(({ data, error }) => {
         if (error) {
           toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')
           return
         }
+
+        const newWindow = getNewWindow()
+        console.log(newWindow)
       
         toast.success('Berhasil menambahkan catatan arus kas!')
         dispatch(addItemToExpenses(data))
+        dispatch(setActiveWindow(newWindow))
+        dispatch(addEditedItemToWindows(newWindow))
         props.setIsModalOpen(false)
       })
   }

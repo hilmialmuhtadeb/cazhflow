@@ -2,9 +2,9 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-hot-toast'
-import { addItemToWindows } from '../../store/slice/windowSlice'
+import { addEditedItemToWindows, addItemToWindows } from '../../store/slice/windowSlice'
 import slugify from 'react-slugify';
-import { addNewWindow } from '../../utils/handler/window'
+import { addNewWindow, editWindow } from '../../utils/handler/window'
 import { handleKeyUp } from '../../utils/shared'
 
 const WindowModal = (props) => {
@@ -13,8 +13,9 @@ const WindowModal = (props) => {
   const [description, setDescription] = useState('')
   const authUser = useSelector(state => state.auth.authUser)
   const dispatch = useDispatch()
-  
-  function handleSubmit() {
+  let window = props.editWindow
+
+  function windowPayloadBuilder() {
     const username = authUser.username
     const payload = {
       username,
@@ -22,10 +23,30 @@ const WindowModal = (props) => {
       title,
       description
     }
+    return payload
+  }
+  
+  function handleSubmit() {
+    const payload = windowPayloadBuilder()
     
-    if (!title || !username) {
+    if (!title) {
       toast.error('Judul harus diisi yaa :D')
       return
+    }
+
+    if (window.id) {
+      editWindow(payload, window.id)
+        .then(res => {
+          const {data, error} = res
+          if (error) {
+            toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')
+            return
+          }
+          toast.success('Berhasil mengubah data!')
+          dispatch(addEditedItemToWindows(data))
+          props.setIsWindowModalOpen(false)
+        })
+        return
     }
     
     addNewWindow(payload)
@@ -37,16 +58,18 @@ const WindowModal = (props) => {
         }
         toast.success('Berhasil membuat jendela arus kas baru!')
         dispatch(addItemToWindows(data))
-        props.setIsModalOpen(false)
+        props.setIsWindowModalOpen(false)
       })
   }
   
   function closeModal() {
-    props.setIsModalOpen(false)
+    props.setIsWindowModalOpen(false)
   }
 
   useEffect(() => {
     setIsOpen(props.isOpen)
+    setTitle(window.title)
+    setDescription(window.description)
   }, [props])
 
   return (
@@ -91,6 +114,7 @@ const WindowModal = (props) => {
                       placeholder="contoh: Agustus 2022"
                       onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setTitle(e.target.value)}
+                      value={ title }
                     />
                   </div>
                   <div className="my-4">
@@ -100,6 +124,7 @@ const WindowModal = (props) => {
                       className='w-full border border-gray-300 resize-none p-2 rounded-md'
                       onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setDescription(e.target.value)}
+                      value={ description }
                     ></textarea>
                   </div>
 

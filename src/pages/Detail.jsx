@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import ExpenseModal from '../components/layouts/ExpenseModal'
-import { setExpenses } from '../store/slice/windowSlice'
+import { setActiveWindows, setExpenses } from '../store/slice/windowSlice'
 import { NumericFormat } from 'react-number-format';
 import { getExpenses, getWindowBySlug } from '../utils/handler/window'
 
@@ -12,28 +12,39 @@ const Detail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const dispatch = useDispatch()
   const expenses = useSelector(state => state.window.expenses)
+  const activeWindows = useSelector(state => state.window.activeWindows)
 
   function openModal () {
     setIsModalOpen(true)
   }
   
   useEffect(() => {
-    getWindowBySlug(slug)
-      .then(({ data, error}) => {
-        setWindow(data)
-      })
+    const activeWindow = activeWindows.find(w => w.slug === slug) || null
+    if (activeWindow) {
+      setWindow(activeWindow)
+      getExpenses(activeWindow.id)
+        .then(res => dispatch(setExpenses(res.data)))
+    } else {
+      getWindowBySlug(slug)
+        .then(({ data, error}) => {
+          setWindow(data)
+          dispatch(setActiveWindows(data))
+          getExpenses(data.id)
+            .then(res => dispatch(setExpenses(res.data)))
+        })
+      }
   }, [])
     
-  useEffect(() => {
-    const window_id = window?.id || 0
-    getExpenses(window_id)
-      .then(({ data, err }) => {
-        dispatch(setExpenses(data))
-      })
-  }, [window])
+  // useEffect(() => {
+  //   const window_id = window?.id || 0
+  //   getExpenses(window_id)
+  //     .then(({ data, err }) => {
+  //       dispatch(setExpenses(data))
+  //     })
+  // }, [window])
     
   function showExpenses () {
-    if (!!expenses) {
+    if (expenses.length > 0) {
       return (
         <div className="py-8">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -98,7 +109,10 @@ const Detail = () => {
       )
     } else {
       return (
-        <p>Loading</p>
+        <div className='py-12 text-center'>
+          <img className='mx-auto' src="../src/assets/expenses.svg" alt="pengeluaran" />
+          <p className='font-medium my-4'>Catatan arus kas masih kosong.</p>
+        </div>
       )
     }
   }

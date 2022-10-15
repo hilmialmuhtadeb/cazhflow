@@ -5,33 +5,38 @@ import { useDispatch } from 'react-redux'
 import { removeDeletedWindow } from '../../store/slice/windowSlice'
 import { deleteWindow } from '../../utils/handler/window'
 
-const DeleteModal = (props) => {
-  const [isOpen, setIsOpen] = useState(true)
-  const [windowId, setWindowId] = useState(0)
+export default function DeleteModal(props) {
+  const [isOpen, setIsOpen] = useState(false)
   const dispatch = useDispatch()
 
-  function handleDelete (id) {
-    deleteWindow(id)
+  function deleteHandler () {
+    deleteWindow(props.id)
       .then(res => {
-        const { data, error } = res
+        const {data, error} = res
         if (error) {
-          toast.error('Gagal menghapus jendela arus kas')
+          toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')
+          return
         }
-        toast.success('Berhasil menghapus jendela arus kas')
-        dispatch(removeDeletedWindow(id))
-        props.setIsDeleteModalOpen(false)
+        toast.success('Berhasil menghapus jendela arus kas!')
+        dispatch(removeDeletedWindow(data))
+        return closeModal()
       })
-
   }
 
   function closeModal() {
     props.setIsDeleteModalOpen(false)
+    setIsOpen(false)
+  }
+
+  function openModal() {
+    setIsOpen(true)
   }
 
   useEffect(() => {
-    setIsOpen(props.isOpen)
-    setWindowId(props.deleteWindow)
-  }, [props])
+    if (props.isOpen) {
+      openModal()
+    }
+  }, [props.isOpen])
 
   return (
     <>
@@ -65,25 +70,25 @@ const DeleteModal = (props) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Yakin ingin menghapus Jendela Arus Kas?
+                    Yakin ingin menghapus?
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Jendela Arus Kas yang sudah dihapus tidak dapat dipulihkan. Sebagai gantinya anda dapat membuat ulang Jendela Arus Kas jika sudah terhapus.
+                      Jendela Arus Kas yang dihapus tidak dapat dipulihkan.
                     </p>
                   </div>
 
                   <div className="mt-4">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                      onClick={() => handleDelete(windowId)}
+                      className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 hover:border-red-500"
+                      onClick={deleteHandler}
                     >
                       Hapus
                     </button>
                     <button
                       type="button"
-                      className="mx-2 inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium hover:bg-gray-100"
+                      className="inline-flex justify-center rounded-md border-2 border-transparent bg-gray-100 px-4 py-2 text-sm font-medium hover:bg-gray-200 mx-2 hover:border-gray-500"
                       onClick={closeModal}
                     >
                       Batal
@@ -98,5 +103,3 @@ const DeleteModal = (props) => {
     </>
   )
 }
-
-export default DeleteModal

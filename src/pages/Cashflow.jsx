@@ -17,7 +17,7 @@ const Cashflow = () => {
   const [isWindowModalOpen, setIsWindowModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [editWindow, setEditWindow] = useState({})
-  const [deleteWindow, setDeleteWindow] = useState(0)
+  const [idWindowDelete, setIdWindowDelete] = useState(0)
 
   function openModal () {
     setEditWindow({})
@@ -31,8 +31,10 @@ const Cashflow = () => {
     }
     const user = JSON.parse(strUser) || {}
 
-    getAllWindows(user.username)
-      .then(res => dispatch(setWindows(res)))
+    if (windows.length < 1) {
+      getAllWindows(user.username)
+        .then(res => dispatch(setWindows(res)))
+    }
   }, [])
 
   function editButtonHandler (window) {
@@ -40,8 +42,8 @@ const Cashflow = () => {
     setIsWindowModalOpen(true)
   }
 
-  function deleteButtonHandler (window) {
-    setDeleteWindow(window.id)
+  function deleteButtonHandler (id) {
+    setIdWindowDelete(id)
     setIsDeleteModalOpen(true)
   }
   
@@ -99,8 +101,8 @@ const Cashflow = () => {
                   <div className="py-2 px-3 box-border border border-2 border-yellow-500 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:cursor-pointer rounded mx-2" onClick={() => editButtonHandler(w)} >
                     <FontAwesomeIcon icon={faPen} />
                   </div>
-                  <div className="py-2 px-3 box-border border border-2 border-red-500 text-red-500 hover:text-white hover:bg-red-500 hover:cursor-pointer rounded">
-                    <FontAwesomeIcon icon={faTrash} onClick={() => deleteButtonHandler(w)} />
+                  <div className="py-2 px-3 box-border border border-2 border-red-500 text-red-500 hover:text-white hover:bg-red-500 hover:cursor-pointer rounded" onClick={() => deleteButtonHandler(w.id)} >
+                    <FontAwesomeIcon icon={faTrash} />
                   </div>
                 </div>
               </div>
@@ -142,7 +144,7 @@ const Cashflow = () => {
           </button>
         </div>
         <WindowModal editWindow={editWindow} setIsWindowModalOpen={setIsWindowModalOpen} isOpen={isWindowModalOpen} />
-        <DeleteModal deleteWindow={deleteWindow} setIsDeleteModalOpen={setIsDeleteModalOpen} isOpen={isDeleteModalOpen} />
+        <DeleteModal id={idWindowDelete} setIsDeleteModalOpen={setIsDeleteModalOpen} isOpen={isDeleteModalOpen} />
       </div>
       { showWindows() }
     </div>

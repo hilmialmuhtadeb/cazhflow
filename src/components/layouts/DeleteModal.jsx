@@ -2,14 +2,58 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
-import { removeDeletedWindow } from '../../store/slice/windowSlice'
+import { addEditedItemToWindows, removeDeletedExpense, removeDeletedWindow, setActiveWindow } from '../../store/slice/windowSlice'
+import { deleteExpense } from '../../utils/handler/expense'
 import { deleteWindow } from '../../utils/handler/window'
 
 export default function DeleteModal(props) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isDeleteExpense, setIsDeleteExpense] = useState(false)
   const dispatch = useDispatch()
 
+  function getNewAmount (expense) {
+    if (expense.isExpense === true) {
+      return {
+        type: 'expenses',
+        expenses: props.window.expenses - expense.amount,
+      }
+    } else {
+      return {
+        type: 'incomes',
+        incomes: props.window.incomes - expense.amount,
+      }
+    }
+  }
+
+  function getNewWindow (expense) {
+    const newAmount = getNewAmount(expense)
+    const { type } = newAmount
+    return {
+      ...props.window,
+      [type]: newAmount[type],
+    }
+  }
+
   function deleteHandler () {
+    if (isDeleteExpense) {
+      const newAmount = getNewAmount(props.expense)
+      deleteExpense(props.expense, newAmount)
+        .then(res => {
+          const { data, error } = res
+          if (error) {
+            toast.error('Gagal menghapus data')
+            return
+          }
+          toast.success('Berhasil menghapus data')
+          const newWindow = getNewWindow(props.expense)
+          dispatch(removeDeletedExpense(data.id))
+          dispatch(addEditedItemToWindows(newWindow))
+          dispatch(setActiveWindow(newWindow))
+          return closeModal()
+        })
+      return
+    }
+
     deleteWindow(props.id)
       .then(res => {
         const {data, error} = res
@@ -36,7 +80,14 @@ export default function DeleteModal(props) {
     if (props.isOpen) {
       openModal()
     }
-  }, [props.isOpen])
+    if (props.expense) {
+      setIsDeleteExpense(true)
+    }
+    return () => {
+      setIsDeleteExpense(false)
+    }
+  }, [props.isOpen, props.exp])
+
 
   return (
     <>
@@ -74,7 +125,7 @@ export default function DeleteModal(props) {
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Jendela Arus Kas yang dihapus tidak dapat dipulihkan.
+                      { !isDeleteExpense && 'Catatan Arus Kas yang dihapus tidak dapat dipulihkan' }
                     </p>
                   </div>
 

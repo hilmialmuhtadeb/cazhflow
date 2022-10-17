@@ -4,8 +4,9 @@ import { toast } from 'react-hot-toast'
 import { NumericFormat } from 'react-number-format';
 import { addEditedItemToExpenses, addEditedItemToWindows, addItemToExpenses, setActiveWindow } from '../../store/slice/windowSlice';
 import { useDispatch } from 'react-redux';
-import { addNewExpense, editExpense } from '../../utils/handler/window'
 import { handleKeyUp } from '../../utils/shared'
+import { categories } from '../../utils/category';
+import { addNewExpense, editExpense } from '../../utils/handler/expense';
 
 const ExpenseModal = (props) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -92,7 +93,7 @@ const ExpenseModal = (props) => {
   function handleSubmit() {
     const { window } = props || {}
 
-    if (!amount || !description) {
+    if (!amount || !description || !date) {
       toast.error('Semua kolom harus diisi yaa :D')
       return
     }
@@ -223,17 +224,10 @@ const ExpenseModal = (props) => {
                       onChange={(e) => setCategory(e.target.value)}
                       value={category}
                     >
-                      <option value="101">Umum</option>
-                      <option value="102">Kebutuhan</option>
-                      <option value="103">Keinginan</option>
-                      <option value="104">Hobi</option>
-                      <option value="105">Makan</option>
-                      <option value="106">Jajan</option>
-                      <option value="107">Investasi</option>
-                      <option value="108">Hiburan</option>
-                      <option value="109">Jalan-jalan</option>
-                      <option value="201">Gaji</option>
-                      <option value="202">Uang Saku</option>
+                      <option value="">Pilih Kategori</option>
+                      {categories.map((category, index) => (
+                        <option key={index} value={category.id}>{category.name}</option>
+                      ))}
                     </select>
                   </div>
 

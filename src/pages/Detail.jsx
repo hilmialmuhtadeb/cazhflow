@@ -1,10 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useRef, useEffect, useState } from 'react'
+import { Menu, Transition } from '@headlessui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import ExpenseModal from '../components/layouts/ExpenseModal'
 import { addItemToWindows, setActiveWindow, setExpenses } from '../store/slice/windowSlice'
 import { NumericFormat } from 'react-number-format';
-import { getExpenses, getWindowBySlug } from '../utils/handler/window'
+import { getWindowBySlug } from '../utils/handler/window'
+import { getCategoryName } from '../utils/category'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import 'dayjs/locale/id'
+import * as dayjs from 'dayjs'
+import DeleteModal from '../components/layouts/DeleteModal'
+import { getExpenses } from '../utils/handler/expense'
 
 const Detail = () => {
   const { slug } = useParams()
@@ -14,6 +22,8 @@ const Detail = () => {
   const expenses = useSelector(state => state.window.expenses)
   const windows = useSelector(state => state.window.windows)
   const window = useSelector(state => state.window.activeWindow)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [deleteExpense, setDeleteExpense] = useState({})
 
   function openModal () {
     setEditExpense({})
@@ -23,6 +33,11 @@ const Detail = () => {
   function handleEditButton (expense) {
     setEditExpense(expense)
     setIsModalOpen(true)
+  }
+
+  function handleDeleteButton (expense) {
+    setDeleteExpense(expense)
+    setIsDeleteModalOpen(true)
   }
   
   useEffect(() => {
@@ -42,14 +57,6 @@ const Detail = () => {
       }
   }, [])
     
-  // useEffect(() => {
-  //   const window_id = window?.id || 0
-  //   getExpenses(window_id)
-  //     .then(({ data, err }) => {
-  //       dispatch(setExpenses(data))
-  //     })
-  // }, [window])
-    
   function showExpenses () {
     if (expenses.length > 0) {
       return (
@@ -57,7 +64,7 @@ const Detail = () => {
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" className="py-3 px-6" width="40%">
+                    <th scope="col" className="py-3 px-6" width="30%">
                         Deskripsi
                     </th>
                     <th scope="col" className="py-3 px-6" width="15%">
@@ -95,18 +102,43 @@ const Detail = () => {
                         />
                       </th>
                       <td className="py-4 px-6 text-center">
-                          { exp.category_id }
+                        { getCategoryName(exp.category_id) }
                       </td>
                       <td className="py-4 px-6 text-center">
-                          { exp.date }
+                        { dayjs(exp.date).locale('id').format('DD MMMM YYYY') }
                       </td>
                       <td className="py-4 px-6 text-center">
-                      <button
-                        className='rounded-md text-white bg-orange-500 font-medium text-xs py-1 px-2'
-                        onClick={() => handleEditButton(exp)}
-                      >
-                        Ubah
-                      </button>
+                        <Menu as="div" className="relative inline-block">
+                          <div>
+                            <Menu.Button className="inline-flex w-full justify-center rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30">
+                              <FontAwesomeIcon icon={faEllipsisVertical} />
+                            </Menu.Button>
+                          </div>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items className="absolute right-0 mt-2 w-36 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                              <div className="px-1 py-1">
+                                <Menu.Item>
+                                  <button className='block w-full p-2 text-left' onClick={() => handleEditButton(exp)}>
+                                    Ubah
+                                  </button>
+                                </Menu.Item>
+                                <Menu.Item>
+                                  <button className='block w-full p-2 text-left' onClick={() => handleDeleteButton(exp)}>
+                                    Hapus
+                                  </button>
+                                </Menu.Item>
+                              </div>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
                       </td>
                   </tr>
                 )) }
@@ -171,6 +203,7 @@ const Detail = () => {
           window={ window }
           editExpense={ editExpense }
         />
+        <DeleteModal expense={ deleteExpense } window={ window } setIsDeleteModalOpen={setIsDeleteModalOpen} isOpen={isDeleteModalOpen} />
       </div>
     )
   }

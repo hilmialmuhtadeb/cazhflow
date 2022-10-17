@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setLoggedOut, setAuthUser } from '../../store/slice/authSlice'
 import { setWindows } from '../../store/slice/windowSlice'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
 const AccountDropdown = (props) => {
   const user = props.user
@@ -23,7 +25,7 @@ const AccountDropdown = (props) => {
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="w-full justify-center rounded-md px-4 py-2 underline decoration-wavy decoration-emerald-500 dark:hover:bg-gray-700 hover:bg-gray-200">
-            {user.name}
+            { user.name } <FontAwesomeIcon className='ml-2 text-sm' icon={faChevronDown} />
           </Menu.Button>
         </div>
         <Transition

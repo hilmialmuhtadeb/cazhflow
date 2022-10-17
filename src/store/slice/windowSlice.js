@@ -40,6 +40,10 @@ export const windowSlice = createSlice({
     addItemToExpenses: (state, payload) => {
       const expense = payload.payload
       state.expenses = state.expenses.concat(expense)
+    },
+    addEditedItemToExpenses: (state, payload) => {
+      const expense = payload.payload
+      state.expenses = state.expenses.filter(e => e.id !== expense.id).concat(expense)
     }
   },
 })
@@ -52,6 +56,7 @@ export const {
   setActiveWindow,
   setExpenses,
   addItemToExpenses,
+  addEditedItemToExpenses
 } = windowSlice.actions
 
 export default windowSlice.reducer

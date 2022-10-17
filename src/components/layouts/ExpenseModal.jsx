@@ -2,9 +2,9 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { NumericFormat } from 'react-number-format';
-import { addEditedItemToWindows, addItemToExpenses, setActiveWindow } from '../../store/slice/windowSlice';
+import { addEditedItemToExpenses, addEditedItemToWindows, addItemToExpenses, setActiveWindow } from '../../store/slice/windowSlice';
 import { useDispatch } from 'react-redux';
-import { addNewExpense } from '../../utils/handler/window'
+import { addNewExpense, editExpense } from '../../utils/handler/window'
 import { handleKeyUp } from '../../utils/shared'
 
 const ExpenseModal = (props) => {
@@ -14,16 +14,37 @@ const ExpenseModal = (props) => {
   const [isExpense, setIsExpense] = useState('')
   const [date, setDate] = useState('')
   const [category, setCategory] = useState('')
+  const [isEdit, setIsEdit] = useState(false)
   const dispatch = useDispatch()
+  const expense = props.editExpense || {}
 
   useEffect(() => {
     setIsOpen(props.isOpen)
-  }, [props])
+    if (expense.id) {
+      setIsEdit(true)
+      setDescription(expense.description)
+      setAmount(expense.amount)
+      setIsExpense(expense.isExpense)
+      setDate(expense.date)
+      setCategory(expense.category_id)
+    }
+    return () => {
+      setIsEdit(false)
+      setDescription('')
+      setAmount('')
+      setIsExpense('')
+      setDate('')
+      setCategory('')
+    }
+  }, [props.isOpen, expense])
 
   function getNumber(amount) {
-    const splitted = amount.split('.')
-    splitted.shift()
-    return splitted.join('')
+    if (typeof amount === 'string') {
+      const splitted = amount.split('.')
+      splitted.shift()
+      return splitted.join('')
+    }
+    return amount
   }
 
   function getNewWindow() {
@@ -36,6 +57,34 @@ const ExpenseModal = (props) => {
       return {
         ...props.window,
         incomes: props.window.incomes + parseInt(getNumber(amount))
+      }
+    }
+  }
+
+  function getNewAmount() {
+    if (isExpense) {
+      return {
+        type: 'expenses',
+        newExpenses: props.window.expenses - expense.amount + parseInt(getNumber(amount))
+      }
+    }
+    return {
+      type: 'incomes',
+      newIncomes: props.window.incomes - expense.amount + parseInt(getNumber(amount))
+    }
+  }
+
+  function getNewEditedWindow () {
+    const newAmount = getNewAmount()
+    if (newAmount.type === 'expenses') {
+      return {
+        ...props.window,
+        expenses: newAmount.newExpenses
+      }
+    } else {
+      return {
+        ...props.window,
+        incomes: newAmount.newIncomes
       }
     }
   }
@@ -56,6 +105,26 @@ const ExpenseModal = (props) => {
       isExpense,
       date
     }
+
+    if (isEdit) {
+      const newAmount = getNewAmount()
+
+      editExpense(payload, expense.id, newAmount)
+        .then(res => {
+          const {data, error} = res
+          if (error) {
+            toast.error('Koneksi gagal, mohon ulangi beberapa saat lagi.')
+          }
+
+          const newWindow = getNewEditedWindow()
+          dispatch(addEditedItemToExpenses(data))
+          dispatch(addEditedItemToWindows(newWindow))
+          dispatch(setActiveWindow(newWindow))
+          closeModal()
+          toast.success('Berhasil mengubah data!')
+        })
+      return
+    }
     
     addNewExpense(payload, window)
       .then(({ data, error }) => {
@@ -65,7 +134,6 @@ const ExpenseModal = (props) => {
         }
 
         const newWindow = getNewWindow()
-        console.log(newWindow)
       
         toast.success('Berhasil menambahkan catatan arus kas!')
         dispatch(addItemToExpenses(data))
@@ -111,7 +179,7 @@ const ExpenseModal = (props) => {
                     as="h3"
                     className="text-xl font-medium leading-6 text-gray-900"
                   >
-                    Tambah Catatan Arus Kas
+                    { isEdit ? 'Ubah Catatan Arus Kas' : 'Tambah Catatan Arus Kas' }
                   </Dialog.Title>
                   <div className="my-4">
                     <label className='my-2 block font-medium text-gray-600'>Deskripsi</label>
@@ -121,6 +189,7 @@ const ExpenseModal = (props) => {
                       placeholder="contoh: Nasi Goreng"
                       onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setDescription(e.target.value)}
+                      value={description}
                     />
                   </div>
                   <div className="my-4">
@@ -133,6 +202,7 @@ const ExpenseModal = (props) => {
                       allowNegative={ false }
                       onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setAmount(e.target.value)}
+                      value={amount}
                     />
                   </div>
                   <div className="my-4">
@@ -143,6 +213,7 @@ const ExpenseModal = (props) => {
                       placeholder="contoh: Agustus 2022"
                       onKeyUp={(e) => handleKeyUp(e, handleSubmit)}
                       onChange={(e) => setDate(e.target.value)}
+                      value={date}
                     />
                   </div>
                   <div className="my-4">
@@ -150,6 +221,7 @@ const ExpenseModal = (props) => {
                     <select 
                       className='w-full border border-gray-300 p-2 rounded-md'
                       onChange={(e) => setCategory(e.target.value)}
+                      value={category}
                     >
                       <option value="101">Umum</option>
                       <option value="102">Kebutuhan</option>
@@ -164,16 +236,19 @@ const ExpenseModal = (props) => {
                       <option value="202">Uang Saku</option>
                     </select>
                   </div>
-                  <div className="mb-8">
-                    <div className="my-2">
-                      <input onKeyUp={(e) => handleKeyUp(e, handleSubmit)} type="radio" name="isExpense" id='expense' value={true} onChange={(e) => setIsExpense(e.target.value)} />
-                      <label className='mx-2 font-medium text-gray-600' for='expense'>Pengeluaran</label>
-                    </div>
-                    <div className="my-2">
-                      <input onKeyUp={(e) => handleKeyUp(e, handleSubmit)} type="radio" name="isExpense" id='income' value={false} onChange={(e) => setIsExpense(e.target.value)} />
-                      <label className='mx-2 font-medium text-gray-600' for='income'>Pemasukan</label>
-                    </div>
-                  </div>
+
+                  { !isEdit && (
+                      <div className="mb-8">
+                        <div className="my-2">
+                          <input onKeyUp={(e) => handleKeyUp(e, handleSubmit)} type="radio" name="isExpense" id='expense' value={true} onChange={(e) => setIsExpense(e.target.value)} />
+                          <label className='mx-2 font-medium text-gray-600' for='expense'>Pengeluaran</label>
+                        </div>
+                        <div className="my-2">
+                          <input onKeyUp={(e) => handleKeyUp(e, handleSubmit)} type="radio" name="isExpense" id='income' value={false} onChange={(e) => setIsExpense(e.target.value)} />
+                          <label className='mx-2 font-medium text-gray-600' for='income'>Pemasukan</label>
+                        </div>
+                      </div>
+                  )}
 
                   <div className="mt-4">
                     <button
@@ -181,7 +256,7 @@ const ExpenseModal = (props) => {
                       className="inline-flex justify-center rounded-md border border-transparent bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
                       onClick={handleSubmit}
                     >
-                      Tambah
+                      { isEdit ? 'Ubah' : 'Tambah' }
                     </button>
                   </div>
                 </Dialog.Panel>

@@ -111,6 +111,32 @@ async function addNewExpense (payload, window) {
   return { data, error }
 }
 
+async function editExpense (payload, id, newAmount) {
+  const { data, error } = await supabase
+    .from('expenses')
+    .update(payload)
+    .eq('id', id)
+    .single()
+
+  if (newAmount.type === 'expenses') {
+    await supabase
+      .from('windows')
+      .update({
+        expenses: newAmount.newExpenses
+      })
+      .eq('id', payload.window_id)
+  } else {
+    await supabase
+      .from('windows')
+      .update({
+        incomes: newAmount.newIncomes
+      })
+      .eq('id', payload.window_id)
+  }
+
+  return { data, error }
+}
+
 export {
   getAllWindows,
   getWindowBySlug,
@@ -119,4 +145,5 @@ export {
   deleteWindow,
   getExpenses,
   addNewExpense,
+  editExpense
 }

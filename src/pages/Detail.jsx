@@ -9,12 +9,19 @@ import { getExpenses, getWindowBySlug } from '../utils/handler/window'
 const Detail = () => {
   const { slug } = useParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editExpense, setEditExpense] = useState({})
   const dispatch = useDispatch()
   const expenses = useSelector(state => state.window.expenses)
   const windows = useSelector(state => state.window.windows)
   const window = useSelector(state => state.window.activeWindow)
 
   function openModal () {
+    setEditExpense({})
+    setIsModalOpen(true)
+  }
+
+  function handleEditButton (expense) {
+    setEditExpense(expense)
     setIsModalOpen(true)
   }
   
@@ -96,7 +103,7 @@ const Detail = () => {
                       <td className="py-4 px-6 text-center">
                       <button
                         className='rounded-md text-white bg-orange-500 font-medium text-xs py-1 px-2'
-                        onClick={openModal}
+                        onClick={() => handleEditButton(exp)}
                       >
                         Ubah
                       </button>
@@ -161,7 +168,8 @@ const Detail = () => {
         <ExpenseModal
           setIsModalOpen={ setIsModalOpen }
           isOpen={ isModalOpen }
-          window={window}
+          window={ window }
+          editExpense={ editExpense }
         />
       </div>
     )

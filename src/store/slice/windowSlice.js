@@ -5,7 +5,7 @@ export const windowSlice = createSlice({
   initialState: {
     windows: [],
     currentWindow: null,
-    activeWindows: [],
+    activeWindow: [],
     expenses: []
   },
   reducers: {
@@ -29,10 +29,10 @@ export const windowSlice = createSlice({
     //   const window = payload.payload
     //   state.currentWindow = window
     // },
-    // setActiveWindows: (state, payload) => {
-    //   const window = payload.payload
-    //   state.activeWindows = state.activeWindows.concat(window)
-    // },
+    setActiveWindow: (state, payload) => {
+      const window = payload.payload
+      state.activeWindow = window
+    },
     setExpenses: (state, payload) => {
       const expenses = payload.payload
       state.expenses = expenses
@@ -40,6 +40,10 @@ export const windowSlice = createSlice({
     addItemToExpenses: (state, payload) => {
       const expense = payload.payload
       state.expenses = state.expenses.concat(expense)
+    },
+    addEditedItemToExpenses: (state, payload) => {
+      const expense = payload.payload
+      state.expenses = state.expenses.filter(e => e.id !== expense.id).concat(expense)
     }
   },
 })
@@ -49,9 +53,10 @@ export const {
   addItemToWindows,
   addEditedItemToWindows,
   removeDeletedWindow,
-  setActiveWindows,
+  setActiveWindow,
   setExpenses,
   addItemToExpenses,
+  addEditedItemToExpenses
 } = windowSlice.actions
 
 export default windowSlice.reducer

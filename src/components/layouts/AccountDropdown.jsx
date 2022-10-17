@@ -3,6 +3,7 @@ import { Fragment } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setLoggedOut, setAuthUser } from '../../store/slice/authSlice'
+import { setWindows } from '../../store/slice/windowSlice'
 
 const AccountDropdown = (props) => {
   const user = props.user
@@ -12,6 +13,7 @@ const AccountDropdown = (props) => {
   function handleLogout () {
     dispatch(setAuthUser({}))
     dispatch(setLoggedOut())
+    dispatch(setWindows([]))
     window.localStorage.removeItem('user')
     navigate('/login')
   }

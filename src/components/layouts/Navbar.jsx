@@ -17,6 +17,9 @@ const Navbar = () => {
         <Link to="/" className='text-2xl font-extrabold '>
           <Logo />
         </Link>
+        <Link to="/welcome" className='font-medium '>
+          About
+        </Link>
         <div className='flex'>
           <AccountDropdown user={authUser} />
           <button className='mx-6 p-1 border dark:bg-gray-700 dark:border-gray-500 rounded' onClick={changeMode}>

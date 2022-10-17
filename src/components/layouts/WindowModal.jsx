@@ -11,6 +11,7 @@ const WindowModal = (props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [isEdit, setIsEdit] = useState(false)
   const authUser = useSelector(state => state.auth.authUser)
   const dispatch = useDispatch()
   let window = props.editWindow
@@ -70,6 +71,14 @@ const WindowModal = (props) => {
     setIsOpen(props.isOpen)
     setTitle(window.title)
     setDescription(window.description)
+    if (props.editWindow.id) {
+      setIsEdit(true)
+    }
+    return () => {
+      setIsEdit(false)
+      setTitle('')
+      setDescription('')
+    }
   }, [props])
 
   return (
@@ -104,7 +113,7 @@ const WindowModal = (props) => {
                     as="h3"
                     className="text-xl font-medium leading-6 text-gray-900"
                   >
-                    Buat Jendela Arus Kas Baru
+                    { isEdit ? 'Ubah Jendela Arus Kas' : 'Buat Jendela Arus Kas Baru' }
                   </Dialog.Title>
                   <div className="my-4">
                     <label className='my-2 block font-medium text-gray-600'>Judul Arus Kas</label>
@@ -134,7 +143,7 @@ const WindowModal = (props) => {
                       className="inline-flex justify-center rounded-md border border-transparent bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
                       onClick={handleSubmit}
                     >
-                      Buat
+                      { isEdit ? 'Ubah' : 'Buat' }
                     </button>
                   </div>
                 </Dialog.Panel>

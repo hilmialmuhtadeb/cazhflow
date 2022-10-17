@@ -2,33 +2,40 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import ExpenseModal from '../components/layouts/ExpenseModal'
-import { setActiveWindows, setExpenses } from '../store/slice/windowSlice'
+import { addItemToWindows, setActiveWindow, setExpenses } from '../store/slice/windowSlice'
 import { NumericFormat } from 'react-number-format';
 import { getExpenses, getWindowBySlug } from '../utils/handler/window'
 
 const Detail = () => {
   const { slug } = useParams()
-  const [window, setWindow] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editExpense, setEditExpense] = useState({})
   const dispatch = useDispatch()
   const expenses = useSelector(state => state.window.expenses)
-  const activeWindows = useSelector(state => state.window.activeWindows)
+  const windows = useSelector(state => state.window.windows)
+  const window = useSelector(state => state.window.activeWindow)
 
   function openModal () {
+    setEditExpense({})
+    setIsModalOpen(true)
+  }
+
+  function handleEditButton (expense) {
+    setEditExpense(expense)
     setIsModalOpen(true)
   }
   
   useEffect(() => {
-    const activeWindow = activeWindows.find(w => w.slug === slug) || null
+    const activeWindow = windows.find(w => w.slug === slug) || null
     if (activeWindow) {
-      setWindow(activeWindow)
+      dispatch(setActiveWindow(activeWindow))
       getExpenses(activeWindow.id)
-        .then(res => dispatch(setExpenses(res.data)))
+      .then(res => dispatch(setExpenses(res.data)))
     } else {
       getWindowBySlug(slug)
         .then(({ data, error}) => {
-          setWindow(data)
-          dispatch(setActiveWindows(data))
+          dispatch(setActiveWindow(data))
+          dispatch(addItemToWindows(data))
           getExpenses(data.id)
             .then(res => dispatch(setExpenses(res.data)))
         })
@@ -96,7 +103,7 @@ const Detail = () => {
                       <td className="py-4 px-6 text-center">
                       <button
                         className='rounded-md text-white bg-orange-500 font-medium text-xs py-1 px-2'
-                        onClick={openModal}
+                        onClick={() => handleEditButton(exp)}
                       >
                         Ubah
                       </button>
@@ -161,7 +168,8 @@ const Detail = () => {
         <ExpenseModal
           setIsModalOpen={ setIsModalOpen }
           isOpen={ isModalOpen }
-          window={window}
+          window={ window }
+          editExpense={ editExpense }
         />
       </div>
     )

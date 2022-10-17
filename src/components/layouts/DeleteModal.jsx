@@ -3,7 +3,8 @@ import { Fragment, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { addEditedItemToWindows, removeDeletedExpense, removeDeletedWindow, setActiveWindow } from '../../store/slice/windowSlice'
-import { deleteExpense, deleteWindow } from '../../utils/handler/window'
+import { deleteExpense } from '../../utils/handler/expense'
+import { deleteWindow } from '../../utils/handler/window'
 
 export default function DeleteModal(props) {
   const [isOpen, setIsOpen] = useState(false)
@@ -25,10 +26,11 @@ export default function DeleteModal(props) {
   }
 
   function getNewWindow (expense) {
-    const { type, expenses, incomes } = getNewAmount(expense)
+    const newAmount = getNewAmount(expense)
+    const { type } = newAmount
     return {
       ...props.window,
-      [type]: expenses || incomes,
+      [type]: newAmount[type],
     }
   }
 
@@ -43,13 +45,11 @@ export default function DeleteModal(props) {
             return
           }
           toast.success('Berhasil menghapus data')
-
           const newWindow = getNewWindow(props.expense)
           dispatch(removeDeletedExpense(data.id))
           dispatch(addEditedItemToWindows(newWindow))
           dispatch(setActiveWindow(newWindow))
-
-          setIsOpen(false)
+          return closeModal()
         })
       return
     }

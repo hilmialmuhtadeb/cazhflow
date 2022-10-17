@@ -4,9 +4,9 @@ import { toast } from 'react-hot-toast'
 import { NumericFormat } from 'react-number-format';
 import { addEditedItemToExpenses, addEditedItemToWindows, addItemToExpenses, setActiveWindow } from '../../store/slice/windowSlice';
 import { useDispatch } from 'react-redux';
-import { addNewExpense, editExpense } from '../../utils/handler/window'
 import { handleKeyUp } from '../../utils/shared'
 import { categories } from '../../utils/category';
+import { addNewExpense, editExpense } from '../../utils/handler/expense';
 
 const ExpenseModal = (props) => {
   const [isOpen, setIsOpen] = useState(false)

@@ -5,13 +5,14 @@ import { useParams } from 'react-router-dom'
 import ExpenseModal from '../components/layouts/ExpenseModal'
 import { addItemToWindows, setActiveWindow, setExpenses } from '../store/slice/windowSlice'
 import { NumericFormat } from 'react-number-format';
-import { getExpenses, getWindowBySlug } from '../utils/handler/window'
+import { getWindowBySlug } from '../utils/handler/window'
 import { getCategoryName } from '../utils/category'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 import 'dayjs/locale/id'
 import * as dayjs from 'dayjs'
 import DeleteModal from '../components/layouts/DeleteModal'
+import { getExpenses } from '../utils/handler/expense'
 
 const Detail = () => {
   const { slug } = useParams()
@@ -55,14 +56,6 @@ const Detail = () => {
         })
       }
   }, [])
-    
-  // useEffect(() => {
-  //   const window_id = window?.id || 0
-  //   getExpenses(window_id)
-  //     .then(({ data, err }) => {
-  //       dispatch(setExpenses(data))
-  //     })
-  // }, [window])
     
   function showExpenses () {
     if (expenses.length > 0) {

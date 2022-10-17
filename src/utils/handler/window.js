@@ -67,6 +67,11 @@ async function deleteWindow (id) {
     .eq('id', id)
     .single()
 
+  await supabase
+    .from('expenses')
+    .delete()
+    .eq('window_id', id)
+
   return { data, error }
 }
 
@@ -91,7 +96,6 @@ async function addNewExpense (payload, window) {
   const newIncomes = incomes + parseInt(amount)
   
   if (isExpense === 'true') {
-    console.log('exp: ' + newExpenses)
     await supabase
       .from('windows')
       .update({
@@ -99,7 +103,6 @@ async function addNewExpense (payload, window) {
       })
       .eq('id', window_id)
   } else {
-    console.log('inc: ' + newIncomes)
     await supabase
       .from('windows')
       .update({
@@ -137,6 +140,32 @@ async function editExpense (payload, id, newAmount) {
   return { data, error }
 }
 
+async function deleteExpense (expense, newAmount) {
+  const { data, error } = await supabase
+    .from('expenses')
+    .delete()
+    .eq('id', expense.id)
+    .single()
+
+  if (expense.isExpense === true) {
+    await supabase
+      .from('windows')
+      .update({
+        expenses: newAmount.expenses
+      })
+      .eq('id', expense.window_id)
+  } else {
+    await supabase
+      .from('windows')
+      .update({
+        incomes: newAmount.incomes
+      })
+      .eq('id', expense.window_id)
+  }
+
+  return { data, error }
+}
+
 export {
   getAllWindows,
   getWindowBySlug,
@@ -145,5 +174,6 @@ export {
   deleteWindow,
   getExpenses,
   addNewExpense,
-  editExpense
+  editExpense,
+  deleteExpense
 }

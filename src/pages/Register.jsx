@@ -3,21 +3,45 @@ import { Link, useNavigate } from 'react-router-dom'
 import { LABEL_CLASS, INPUT_CLASS } from '../utils/form'
 import { registerUser } from '../utils/handler/auth'
 import { handleKeyUp } from '../utils/shared'
+import toast from 'react-hot-toast'
+import bcrypt from 'bcryptjs'
 
 const Register = () => {
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const salt = bcrypt.genSaltSync(10)
 
   function handleSubmit() {
+    if (!name || !username || !password) {
+      toast.error('Semua kolom harus diisi yaa')
+      return
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, salt)
+    
     const payload = {
       name,
       username,
-      password
+      // password
+      password: hashedPassword
     }
+
     registerUser(payload)
-    navigate('/login')
+      .then(res => {
+        const { data, error } = res
+        if (error) {
+          if (error.code === '23505') {
+            toast.error('Yah, username sudah dipakai')
+            return
+          }
+          toast.error('Gagal mendaftar')
+          return
+        }
+        toast.success('Berhasil mendaftar')
+        navigate('/login')
+      })
   }
 
   useEffect(() => {

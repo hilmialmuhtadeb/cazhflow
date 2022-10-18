@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import { getAllWindows } from '../utils/handler/window'
+import { setWindows } from '../store/slice/windowSlice'
 import WindowModal from '../components/layouts/WindowModal'
 import DeleteModal from '../components/layouts/DeleteModal'
 import WindowCard from '../components/molecules/WindowCard'
-import { getAllWindows } from '../utils/handler/window'
-import { setWindows } from '../store/slice/windowSlice'
 
 const Cashflow = () => {
   const authUser = useSelector(state => state.auth.authUser)
@@ -34,10 +34,6 @@ const Cashflow = () => {
         .then(res => dispatch(setWindows(res)))
     }
   }, [])
-
-  useEffect(() => {
-    console.log(windows)
-  }, [windows])
 
   function editButtonHandler (window) {
     setEditWindow(window)

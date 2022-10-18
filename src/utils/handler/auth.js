@@ -16,6 +16,8 @@ async function registerUser (payload) {
         password
       },
     ])
+
+  return { data, error }
 }
 
 async function getUser (username) {

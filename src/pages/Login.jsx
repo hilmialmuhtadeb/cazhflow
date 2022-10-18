@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import Logo from '../components/atoms/Logo'
-import { setLoggedIn, setAuthUser } from '../store/slice/authSlice'
-import { INPUT_CLASS, LABEL_CLASS } from '../utils/form'
 import { getUser } from '../utils/handler/auth'
 import { handleKeyUp } from '../utils/shared'
+import { INPUT_CLASS, LABEL_CLASS } from '../utils/form'
+import { setLoggedIn, setAuthUser } from '../store/slice/authSlice'
+import Logo from '../components/atoms/Logo'
+import toast from 'react-hot-toast'
+import bcrypt from 'bcryptjs'
 
 const Login = () => {
   const [username, setUsername] = useState('')
@@ -21,20 +23,27 @@ const Login = () => {
   }, [])
   
   function handleLogin () {
+    if (!username || !password) {
+      toast.error('Semua kolom harus diisi yaa')
+      return
+    }
+    
     getUser(username)
       .then(user => {
         const { 
           password: userPassword = ''
         } = user
     
-        if (userPassword === password) {
+        if (bcrypt.compareSync(password, userPassword)) {
           dispatch(setLoggedIn())
           dispatch(setAuthUser(user))
     
           const storedUser = JSON.stringify(user)
           window.localStorage.setItem('user', storedUser)
-          navigate('/')
+          return navigate('/')
         }
+
+        toast.error('Username atau password salah')
       })
   }
   

@@ -1,12 +1,17 @@
-import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
-import { addEditedItemToWindows, removeDeletedExpense, removeDeletedWindow, setActiveWindow } from '../../store/slice/windowSlice'
+import { Dialog, Transition } from '@headlessui/react'
 import { deleteExpense } from '../../utils/handler/expense'
 import { deleteWindow } from '../../utils/handler/window'
+import {
+  addEditedItemToWindows,
+  removeDeletedExpense,
+  removeDeletedWindow,
+  setActiveWindow
+} from '../../store/slice/windowSlice'
+import toast from 'react-hot-toast'
 
-export default function DeleteModal(props) {
+const DeleteModal = (props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isDeleteExpense, setIsDeleteExpense] = useState(false)
   const dispatch = useDispatch()
@@ -154,3 +159,5 @@ export default function DeleteModal(props) {
     </>
   )
 }
+
+export default DeleteModal

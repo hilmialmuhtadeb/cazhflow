@@ -1,11 +1,11 @@
-import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-hot-toast'
-import { addEditedItemToWindows, addItemToWindows } from '../../store/slice/windowSlice'
-import slugify from 'react-slugify';
+import { Dialog, Transition } from '@headlessui/react'
 import { addNewWindow, editWindow } from '../../utils/handler/window'
 import { handleKeyUp } from '../../utils/shared'
+import { addEditedItemToWindows, addItemToWindows } from '../../store/slice/windowSlice'
+import slugify from 'react-slugify';
 
 const WindowModal = (props) => {
   const [isOpen, setIsOpen] = useState(false)

@@ -1,12 +1,17 @@
-import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { NumericFormat } from 'react-number-format';
-import { addEditedItemToExpenses, addEditedItemToWindows, addItemToExpenses, setActiveWindow } from '../../store/slice/windowSlice';
 import { useDispatch } from 'react-redux';
+import { NumericFormat } from 'react-number-format';
+import { toast } from 'react-hot-toast'
+import { Dialog, Transition } from '@headlessui/react'
 import { handleKeyUp } from '../../utils/shared'
 import { categories } from '../../utils/category';
 import { addNewExpense, editExpense } from '../../utils/handler/expense';
+import {
+  addEditedItemToExpenses,
+  addEditedItemToWindows,
+  addItemToExpenses,
+  setActiveWindow
+} from '../../store/slice/windowSlice';
 
 const ExpenseModal = (props) => {
   const [isOpen, setIsOpen] = useState(false)

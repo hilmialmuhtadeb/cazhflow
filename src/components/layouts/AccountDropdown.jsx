@@ -1,11 +1,11 @@
-import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setLoggedOut, setAuthUser } from '../../store/slice/authSlice'
-import { setWindows } from '../../store/slice/windowSlice'
+import { Menu, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { setWindows } from '../../store/slice/windowSlice'
+import { setLoggedOut, setAuthUser } from '../../store/slice/authSlice'
 
 const AccountDropdown = (props) => {
   const user = props.user
@@ -42,16 +42,7 @@ const AccountDropdown = (props) => {
               <Menu.Item>
                 {({ active }) => (
                   <button
-                    className='group flex text-black w-full items-center rounded-md px-2 py-2 text-sm'
-                  >
-                    Profil
-                  </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className='group text-red-500 flex w-full items-center rounded-md px-2 py-2 text-sm'
+                    className='group text-red-500 flex w-full items-center rounded-md px-2 py-2 text-sm hover:bg-gray-100'
                     onClick={handleLogout}
                   >
                     Keluar

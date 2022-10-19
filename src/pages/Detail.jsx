@@ -43,21 +43,31 @@ const Detail = () => {
   }
 
   function showExpenses () {
-    if (isMobile) {
-      return expenses.map(e => (
-        <ExpenseCard 
-          key={ e.description }
-          expense={ e }
-          handleEditButton={ handleEditButton }
-          handleDeleteButton={ handleDeleteButton }
-        />
-    ))} else {
+    if (expenses.length > 0) {
+      if (isMobile) {
+        return expenses.map(e => (
+          <ExpenseCard 
+            key={ e.description }
+            expense={ e }
+            handleEditButton={ handleEditButton }
+            handleDeleteButton={ handleDeleteButton }
+          />
+        ))
+      } else {
+        return (
+          <ExpenseTable
+            expenses={ expenses }
+            handleEditButton={ handleEditButton }
+            handleDeleteButton={ handleDeleteButton }
+          />
+        )
+      }
+    } else {
       return (
-        <ExpenseTable
-          expenses={ expenses }
-          handleEditButton={ handleEditButton }
-          handleDeleteButton={ handleDeleteButton }
-        />
+        <div className='py-12 text-center'>
+          <img className='mx-auto w-2/3 md:w-1/3' src="../src/assets/expenses.svg" alt="pengeluaran" />
+          <p className='font-medium my-4'>Catatan arus kas masih kosong.</p>
+        </div>
       )
     }
   }

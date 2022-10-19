@@ -60,7 +60,7 @@ const Cashflow = () => {
   }
 
   return (
-    <div className='container py-2 md:py-8'>
+    <div className='container pt-2 md:pt-8 pb-12'>
       <div>
         <h1 className='sm:text-xl font-semibold my-2'>👋 Halo, selamat datang <span className='underline decoration-wavy decoration-emerald-500'>{ authUser.name }</span>!</h1>
         <p className='text-gray-700 dark:text-gray-400'>Apa kabar? Semoga baik, jangan lupa catat arus kasmu yaa! Biar sehat finansial :D</p>
@@ -78,11 +78,7 @@ const Cashflow = () => {
           onClick={openModal}
           className="block rounded-md bg-emerald-500 px-4 py-2 ml-2 text-sm font-medium text-white dark:text-black hover:bg-emerald-600"
         >
-          { isMobile ? <FontAwesomeIcon icon={faPlus} /> : (
-            <>
-              <FontAwesomeIcon icon={ faPlus } />  Arus Kas
-            </>
-          )}
+          <FontAwesomeIcon icon={ faPlus } />  Arus Kas
         </button>
         <WindowModal
           editWindow={ editWindow }

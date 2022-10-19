@@ -85,7 +85,7 @@ const ExpenseTable = (props) => {
   } else {
     return (
       <div className='py-12 text-center'>
-        <img className='mx-auto' src="../src/assets/expenses.svg" alt="pengeluaran" />
+        <img className='mx-auto w-2/3 md:w-1/3' src="../src/assets/expenses.svg" alt="pengeluaran" />
         <p className='font-medium my-4'>Catatan arus kas masih kosong.</p>
       </div>
     )

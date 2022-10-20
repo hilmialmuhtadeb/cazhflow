@@ -24,7 +24,6 @@ const Register = () => {
     const payload = {
       name,
       username,
-      // password
       password: hashedPassword
     }
 

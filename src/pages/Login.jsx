@@ -30,6 +30,11 @@ const Login = () => {
     
     getUser(username)
       .then(user => {
+        if (!user) {
+          toast.error('Username tidak ditemukan')
+          return
+        }
+        
         const { 
           password: userPassword = ''
         } = user
@@ -43,7 +48,7 @@ const Login = () => {
           return navigate('/')
         }
 
-        toast.error('Username atau password salah')
+        toast.error('Password tidak sesuai. Coba periksa lagi ya')
       })
   }
   

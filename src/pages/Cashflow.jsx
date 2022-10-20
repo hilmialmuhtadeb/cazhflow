@@ -42,11 +42,14 @@ const Cashflow = () => {
       return navigate('/login')
     }
     const user = JSON.parse(strUser) || {}
+    document.title = `Cazhflow - ${user.name}`
 
     if (windows.length < 1) {
       getAllWindows(user.username)
         .then(res => dispatch(setWindows(res)))
     }
+
+    return () => { document.title = 'Cazhflow' }
   }, [])
 
   function editButtonHandler (window) {
@@ -103,7 +106,7 @@ const Cashflow = () => {
       </div>
       { windows.length < 1 && (
         <div className='py-2 md:py-12'>
-          <img className='mx-auto mb-6 w-2/3 md:w-1/2' src="./src/assets/arus-kas.svg" alt="Arus Kas" />
+          <img className='mx-auto mb-6 w-2/3 md:w-1/2' src="/arus-kas.svg" alt="Arus Kas" />
           <p className='text-center font-semibold'>Yah, kamu belum pernah buat catatan arus kas nih. <span className='underline hover:cursor-pointer text-emerald-500 hover:text-emerald-700' onClick={ openModal } >Buat di sini</span></p>
         </div>
       ) }

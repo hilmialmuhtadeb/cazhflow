@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { Menu, Transition } from '@headlessui/react'
-import 'dayjs/locale/id'
-import * as dayjs from 'dayjs'
+// import 'dayjs/locale/id'
+// import * as dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 import { getCategoryName } from '../../utils/category'
@@ -41,7 +41,8 @@ const ExpenseTable = (props) => {
                 />
               </th>
               <td className="py-4 px-6 text-center">{ getCategoryName(exp.category_id) }</td>
-              <td className="py-4 px-6 text-center">{ dayjs(exp.date).locale('id').format('DD MMMM YYYY') }</td>
+              {/* <td className="py-4 px-6 text-center">{ dayjs(exp.date).locale('id').format('DD MMMM YYYY') }</td> */}
+              <td className="py-4 px-6 text-center">{ exp.date }</td>
               <td className="py-4 px-6 text-center">
                 <Menu as="div" className="relative inline-block">
                   <div>

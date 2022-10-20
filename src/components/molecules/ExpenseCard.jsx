@@ -3,8 +3,8 @@ import { Menu, Transition } from '@headlessui/react'
 import { getCategoryName } from '../../utils/category'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
-import 'dayjs/locale/id'
-import * as dayjs from 'dayjs'
+// import 'dayjs/locale/id'
+// import * as dayjs from 'dayjs'
 import { NumericFormat } from 'react-number-format'
 
 const ExpenseCard = (props) => {
@@ -19,7 +19,8 @@ const ExpenseCard = (props) => {
       <div className='my-2 p-2 border-b'>
         <div className="flex text-sm font-medium text-gray-400 justify-between">
           <p className=''>{ getCategoryName(expense.category_id) }</p>
-          <p className=''>{ dayjs(expense.date).locale('id').format('DD MMMM YYYY') }</p>
+          {/* <p className=''>{ dayjs(expense.date).locale('id').format('DD MMMM YYYY') }</p> */}
+          <p>{ expense.date }</p>
         </div>
         <p className='text-lg mb-2'>{ expense.description }</p>
         <div className="flex space-between">
